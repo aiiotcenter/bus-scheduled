@@ -6,16 +6,16 @@ dotenv.config(); // Load environment variables from .env file
 require('dotenv').config({path:__dirname+'/./../../.env'})
 
 import http from 'http';
-import { Server as SocketIOServer, Socket } from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import app from './app';
 
-import path from 'path';
 // import displayMessage from '../frontend/src/script'; // Removed: backend shouldn't import frontend code directly
-//const io = require('socket.io')(http);
+
 const port: number = Number(process.env.BACKEND_SERVER_PORT)|| 3001;
 
 // host chooses which netweork interface the server binds to (0.0.0.0 is default values means listen on all network interface on this PC)
 // so the backend can be accessed from other devices on the same network using my PC's LAN IP
+
 const host: string = (process.env.BACKEND_SERVER_HOST || '0.0.0.0').toString();
 import {initDB} from './database/constructDatabase';
 //===========================================================================================================

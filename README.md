@@ -225,6 +225,11 @@ To run the Near East University Bus Tracker system, follow these steps:
    - start the development server with `npm run start` 
    - the web application will be available at `http://localhost:3000`
 
+   - 5.1.1 Hosted mode:
+     - ensure both devices(phone and laptop) are connected to the same WiFi
+     - From `codebase/webApp` run `npm run host:full`
+     - Open the **Network** URL printed by Vite on the phone (example: `http://192.168.x.x:3000`)
+
    **5.2. Mobile Application:** 
 
       **5.2.1. User version:**

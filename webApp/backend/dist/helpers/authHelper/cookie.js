@@ -30,8 +30,8 @@ const createJWTtoken = (res, tokenName, secretKey, components, maximumAge, store
         const cookieSetter = (0, exports.getCookieSetter)(res);
         cookieSetter(tokenName, token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: false,
+            sameSite: "lax", // "lax" for development
             path: "/",
         });
     }

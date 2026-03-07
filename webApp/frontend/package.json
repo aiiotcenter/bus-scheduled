@@ -5,9 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build:backend": "tsc -p ../backend/tsconfig.json",
+    "build": "tsc -b && vite build && npm run build:backend",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "host": "vite --host"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

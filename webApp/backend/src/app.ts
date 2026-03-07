@@ -21,7 +21,21 @@ import cookieParser from 'cookie-parser';//middleware for parsing cookies in Exp
 //===========================================================================================
 
 const corsOptions: cors.CorsOptions = {
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: (origin, callback) => {
+    // allow non-browser tools (no Origin header)
+    if (!origin) return callback(null, true);
+
+    const allowed = [
+      'http://localhost:3000',
+      'http://127.0.0.1:3000',
+    ];
+
+    // allow LAN dev server origins (when opening the Vite host URL from phone)
+    const isLanDev = /^http:\/\/(\d{1,3}\.){3}\d{1,3}:3000$/.test(origin); // allow http://<LAN-IP>:3000 for phone testing when using vite --host "npm run host:full"
+
+    if (allowed.includes(origin) || isLanDev) return callback(null, true);
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'HEAD', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],

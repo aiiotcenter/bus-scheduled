@@ -40,8 +40,8 @@ export const createJWTtoken = (
         const cookieSetter = getCookieSetter(res);
         cookieSetter(tokenName, token, {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: false,
+            sameSite: "lax",// "lax" for development
             path: "/",
         });
     }

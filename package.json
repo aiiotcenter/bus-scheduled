@@ -10,7 +10,8 @@
     "build:backend": "tsc -p backend/tsconfig.json",
     "build:frontend": "tsc -p frontend/tsconfig.json",
     "build": "npm run build:backend && npm run build:frontend",
-    "start": "npm run build && concurrently \"nodemon backend/dist/server.js\" \"cd frontend && npm run dev\""
+    "start": "npm run build && concurrently \"nodemon backend/dist/server.js\" \"cd frontend && npm run dev\"",
+    "host": "vite host"
   },
   "keywords": [],
   "author": "",
