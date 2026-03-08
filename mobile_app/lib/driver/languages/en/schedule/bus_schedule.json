@@ -1,4 +1,5 @@
 {
+  "driver_home_welcome_prefix": "Welcome,",
   "driver_schedule_title": "My Bus Schedule",
   "driver_schedule_error_try_later": "Could not load schedule. Please try later",
   "driver_schedule_error_no_data": "No scheduled trips found"

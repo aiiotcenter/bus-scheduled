@@ -57,41 +57,57 @@ class _LoginPageState extends State<LoginPage> {
 
       //------------------------------------------------------------------
       body: SafeArea(
-        child: Column(
-          children: [
-            // Upper part (Logo) -------------------------------------
-            LoginHeader(background: cs.primary, textColor: cs.onPrimary),
-            
-            // login data form ===================================================================================
-            LoginForm(
-              emailController: _controller.emailController,
-              passwordController: _controller.passwordController,
-              loginErrorMessage: _controller.loginErrorMessage,
-              isLoading: _controller.isLoading,
-              primaryColor: cs.primary,
-              backgroundColor: cs.onPrimary,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final bottomInset = MediaQuery.of(context).viewInsets.bottom;
 
-              onLogin: () async {
-                final loginSucceeded = await _controller.login();
-                if (!loginSucceeded) return;
-                if (!mounted) return;
+            return SingleChildScrollView(
+              padding: EdgeInsets.only(bottom: bottomInset),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  children: [
+                    // Upper part (Logo) -------------------------------------
+                    LoginHeader(
+                      background: cs.primary,
+                      textColor: cs.onPrimary,
+                    ),
 
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (_) => const HomepageDriver()),
-                );
-              },
+                    // login data form ===================================================================================
+                    LoginForm(
+                      emailController: _controller.emailController,
+                      passwordController: _controller.passwordController,
+                      loginErrorMessage: _controller.loginErrorMessage,
+                      isLoading: _controller.isLoading,
+                      primaryColor: cs.primary,
+                      backgroundColor: cs.onPrimary,
 
-              // =================================================================
-              onForgotPassword: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const ForgotPasswordPage(), // dircet driver to forgot password page
-                  ),
-                );
-              },
-            ),
-          ],
+                      onLogin: () async {
+                        final loginSucceeded = await _controller.login();
+                        if (!loginSucceeded) return;
+                        if (!mounted) return;
+
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (_) => const HomepageDriver(),
+                          ),
+                        );
+                      },
+
+                      // =================================================================
+                      onForgotPassword: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const ForgotPasswordPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

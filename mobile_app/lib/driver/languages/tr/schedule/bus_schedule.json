@@ -1,4 +1,5 @@
 {
+  "driver_home_welcome_prefix": "Hoş geldiniz,",
   "driver_schedule_title": "Otobüs Programım",
   "driver_schedule_error_try_later": "Program yüklenemedi. Lütfen daha sonra tekrar deneyin",
   "driver_schedule_error_no_data": "Planlanmış sefer bulunamadı"

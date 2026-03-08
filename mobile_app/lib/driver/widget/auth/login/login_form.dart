@@ -34,14 +34,12 @@ class LoginForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 22),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 45, vertical: 22),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
 
-            children: [
+        children: [
             const SizedBox(height: 26),
 
             // Email Slot ============================================
@@ -161,8 +159,6 @@ class LoginForm extends StatelessWidget {
             ),
             // =====================================================
           ],
-        ),
-        ),
       ),
     );
   }

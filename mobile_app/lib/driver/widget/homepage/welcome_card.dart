@@ -3,6 +3,8 @@
 //========================================================
 import 'package:flutter/material.dart';
 
+import '../../service/localization/localization_service.dart';
+
 //========================================================
 //? widget
 //========================================================
@@ -47,7 +49,7 @@ class WelcomeCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Welcome , ${driverName.isEmpty ? '...' : driverName}',
+                  '${'driver_home_welcome_prefix'.translate} ${driverName.isEmpty ? '' : driverName}',
                   style: theme.textTheme.bodyMedium?.copyWith(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
