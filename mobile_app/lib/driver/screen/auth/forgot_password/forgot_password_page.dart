@@ -72,18 +72,26 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
       //------------------------------------------------------------------
       body: SafeArea(
-        child: Column(
-          children: [
-            ForgotPasswordForm(
-              emailController: _controller.emailController,
-              isLoading: _controller.isLoading,
-              onSendResetLink: _sendResetLink,
-              errorMessage: _controller.inlineErrorMessage,
-              successMessage: _controller.inlineSuccessMessage,
-              primaryColor: cs.primary,
-              backgroundColor: cs.onPrimary,
-            ),
-          ],
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: ForgotPasswordForm(
+                  emailController: _controller.emailController,
+                  isLoading: _controller.isLoading,
+                  onSendResetLink: _sendResetLink,
+                  errorMessage: _controller.inlineErrorMessage,
+                  successMessage: _controller.inlineSuccessMessage,
+                  primaryColor: cs.primary,
+                  backgroundColor: cs.onPrimary,
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

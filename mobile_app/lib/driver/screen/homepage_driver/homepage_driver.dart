@@ -6,12 +6,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../driver_profile/driver_profile.dart';
-import '../bus_schedule/bus_schedule.dart';
 
 import '../../controller/homepage/driver_homepage_header_controller.dart';
-import '../../model/homepage/bus_option.dart';
-import '../../widget/homepage/tracking_card.dart';
+import '../../controller/schedule/bus_schedule/bus_schedule_controller.dart';
 import '../../widget/homepage/welcome_card.dart';
+import '../../widget/homepage/schedule_section.dart';
+import '../../widget/driver_bottom_nav_bar.dart';
 import '../../../common/pull_to_refresh.dart';
 
 //========================================================
@@ -25,27 +25,20 @@ class HomepageDriver extends StatefulWidget {
 class _HomepageDriverState extends State<HomepageDriver> {
   static const _border = Color(0xFFC9A47A);
 
-  bool _expanded = false;
-  bool _paused = false;
+
   int _bottomIndex = 0;
 
-  final List<BusOption> _buses = const [
-    BusOption(name: 'Gonyle 1', color: Color.fromARGB(255, 126, 2, 175)),
-    BusOption(name: 'Famagusta', color: Color.fromARGB(255, 0, 227, 204)),
-    BusOption(name: 'Lefkosa', color: Color.fromARGB(255, 0, 168, 14)),
-    BusOption(
-      name: 'Yenikent - Gonyle Bus',
-      color: Color.fromARGB(255, 2, 13, 167),
-    ),
-    BusOption(name: 'Kizilbas', color: Color.fromARGB(255, 255, 251, 4)),
-  ];
 
-  late BusOption _currentBus;
 
   // =========================================================================
   // controller
   final DriverHomepageHeaderController _headerController =
       DriverHomepageHeaderController();
+
+  final DriverBusScheduleController _scheduleController =
+      DriverBusScheduleController();
+
+  final Set<String> _expandedDays = <String>{};
 
   Timer? _clockTimer;
   DateTime _now = DateTime.now();
@@ -54,10 +47,12 @@ class _HomepageDriverState extends State<HomepageDriver> {
   @override
   void initState() {
     super.initState();
-    _currentBus = _buses.first;
 
     _headerController.addListener(_onHeaderChanged);
     _headerController.fetch();
+
+    _scheduleController.addListener(_onScheduleChanged);
+    _scheduleController.fetch();
 
     _clockTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
@@ -71,10 +66,16 @@ class _HomepageDriverState extends State<HomepageDriver> {
   void dispose() {
     _clockTimer?.cancel();
     _headerController.removeListener(_onHeaderChanged);
+    _scheduleController.removeListener(_onScheduleChanged);
     super.dispose();
   }
 
   void _onHeaderChanged() {
+    if (!mounted) return;
+    setState(() {});
+  }
+
+  void _onScheduleChanged() {
     if (!mounted) return;
     setState(() {});
   }
@@ -85,9 +86,6 @@ class _HomepageDriverState extends State<HomepageDriver> {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
-    final availableBuses = _buses
-        .where((b) => b.name != _currentBus.name)
-        .toList();
     final time =
         '${_now.hour.toString().padLeft(2, '0')}:${_now.minute.toString().padLeft(2, '0')}';
     final date =
@@ -119,6 +117,7 @@ class _HomepageDriverState extends State<HomepageDriver> {
         child: PullToRefresh(
           onRefresh: () async {
             await _headerController.fetch();
+            await _scheduleController.fetch();
           },
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
@@ -135,32 +134,25 @@ class _HomepageDriverState extends State<HomepageDriver> {
                   weekday: weekday,
                 ),
 
-                // ---------------------------------------------------
                 const SizedBox(height: 22),
 
-                // tracking card ---------------------------------------------------
-                TrackingCard(
+                // schedule section ---------------------------------------------------
+                DriverScheduleSection(
+                  controller: _scheduleController,
                   borderColor: _border,
-                  expanded: _expanded,
-                  currentBus: _currentBus,
-                  paused: _paused,
-                  onToggleExpanded: () {
+                  expandedDays: _expandedDays,
+                  onToggleDay: (dayKey, isExpanded) {
                     setState(() {
-                      _expanded = !_expanded;
-                    });
-                  },
-                  onTogglePaused: (paused) {
-                    setState(() {
-                      _paused = paused;
-                    });
-                  },
-                  buses: _expanded ? availableBuses : const [],
-                  onSelectBus: (bus) {
-                    setState(() {
-                      _currentBus = bus;
+                      if (isExpanded) {
+                        _expandedDays.remove(dayKey);
+                      } else {
+                        _expandedDays.add(dayKey);
+                      }
                     });
                   },
                 ),
+
+
               ],
             ),
           ),
@@ -168,61 +160,25 @@ class _HomepageDriverState extends State<HomepageDriver> {
       ),
 
       // bottom navigation bar ---------------------------------------------------
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: DriverBottomNavBar(
         currentIndex: _bottomIndex,
-        onTap: (i) {
-          if (i == _bottomIndex) return;
-
-          if (i == 0) {
-            Navigator.of(
-              context,
-            ).pushReplacement(_noAnimationRoute(const HomepageDriver()));
-            return;
-          }
-
-          if (i == 1) {
-            Navigator.of(
-              context,
-            ).pushReplacement(_noAnimationRoute(const BusSchedule()));
-            return;
-          }
-
-          if (i == 2) {
-            Navigator.of(
-              context,
-            ).pushReplacement(_noAnimationRoute(const DriverProfile()));
-            return;
-          }
-
-          setState(() {
-            _bottomIndex = i;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
         backgroundColor: theme.bottomNavigationBarTheme.backgroundColor ??
-            theme.appBarTheme.backgroundColor,
+            theme.appBarTheme.backgroundColor ??
+            cs.primary,
         selectedItemColor:
             theme.bottomNavigationBarTheme.selectedItemColor ?? cs.secondary,
         unselectedItemColor:
             theme.bottomNavigationBarTheme.unselectedItemColor ?? cs.onPrimary,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'Home',
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Calendar',
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'Profile',
-          ),
-        ],
+        homeLabel: 'Home',
+        profileLabel: 'Profile',
+        onSelectHome: () {
+          Navigator.of(context)
+              .pushReplacement(_noAnimationRoute(const HomepageDriver()));
+        },
+        onSelectProfile: () {
+          Navigator.of(context)
+              .pushReplacement(_noAnimationRoute(const DriverProfile()));
+        },
       ),
       //===========================================================================================
     );

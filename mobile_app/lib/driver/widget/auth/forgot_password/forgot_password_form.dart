@@ -34,16 +34,15 @@ class ForgotPasswordForm extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 420),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
                 //-----------------------------------------------------
                 const SizedBox(height: 50),
 
@@ -145,8 +144,7 @@ class ForgotPasswordForm extends StatelessWidget {
                           ),
                   ),
                 ),
-              ],
-            ),
+            ],
           ),
         ),
       ),

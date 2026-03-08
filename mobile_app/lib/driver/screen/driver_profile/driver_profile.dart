@@ -4,7 +4,6 @@
 import 'package:flutter/material.dart';
 
 import '../homepage_driver/homepage_driver.dart';
-import '../bus_schedule/bus_schedule.dart';
 import '../auth/login/login_page.dart';
 
 import '../../controller/profile/driver_profile_controller.dart';
@@ -20,6 +19,7 @@ import '../../widget/profile/info_row.dart';
 import '../../widget/profile/edit_phone_dialog.dart';
 import '../../widget/auth/logout/logout_card.dart';
 import '../../widget/auth/logout/confirm_logout_dialog.dart';
+import '../../widget/driver_bottom_nav_bar.dart';
 
 
 import '../../../common/pull_to_refresh.dart';
@@ -37,7 +37,7 @@ class _DriverProfileState extends State<DriverProfile> {
   static const _burgundy = Color(0xFF59011A);
   static const _border = Color(0xFFC9A47A);
 
-  int _bottomIndex = 2;
+  int _bottomIndex = 1;
 
   bool _turkishSelected = true;
   bool _darkSelected = false;
@@ -395,49 +395,21 @@ class _DriverProfileState extends State<DriverProfile> {
       //===========================================================================
 
       // bottom bar ===============================================================
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: DriverBottomNavBar(
         currentIndex: _bottomIndex,
-        onTap: (i) {
-          if (i == _bottomIndex) return;
-
-          if (i == 0) {
-            Navigator.of(
-              context,
-            ).pushReplacement(_noAnimationRoute(const HomepageDriver()));
-            return;
-          }
-
-          if (i == 1) {
-            Navigator.of(
-              context,
-            ).pushReplacement(_noAnimationRoute(const BusSchedule()));
-            return;
-          }
-
-          setState(() {
-            _bottomIndex = i;
-          });
-        },
-        type: BottomNavigationBarType.fixed,
         backgroundColor: _burgundy,
         selectedItemColor: _border,
         unselectedItemColor: Colors.white,
-        showSelectedLabels: false,
-        showUnselectedLabels: false,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            label: 'driver_profile_nav_home'.translate,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'driver_profile_nav_calendar'.translate,
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            label: 'driver_profile_nav_profile'.translate,
-          ),
-        ],
+        homeLabel: 'driver_profile_nav_home'.translate,
+        profileLabel: 'driver_profile_nav_profile'.translate,
+        onSelectHome: () {
+          Navigator.of(context)
+              .pushReplacement(_noAnimationRoute(const HomepageDriver()));
+        },
+        onSelectProfile: () {
+          Navigator.of(context)
+              .pushReplacement(_noAnimationRoute(const DriverProfile()));
+        },
       ),
 
       //==============================================================================

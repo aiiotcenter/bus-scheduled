@@ -220,23 +220,33 @@ To run the Near East University Bus Tracker system, follow these steps:
    - run "/codebase/webApp/backend/src/database/constructDatbase.ts" file to build database and seed the mock up data
 
 5. **Run the Application**
-    5.1. Web Application: 
 
-   - start the development server with `npm run start` 
-   - the web application will be available at `http://localhost:3000`
+  **5.1. Web Application:  
 
-   - 5.1.1 Hosted mode:
-     - ensure both devices(phone and laptop) are connected to the same WiFi
-     - From `codebase/webApp` run `npm run host:full`
-     - Open the **Network** URL printed by Vite on the phone (example: `http://192.168.x.x:3000`)
+      - start the development server with `npm run start` 
+      - the web application will be available at `http://localhost:3000`
 
-   **5.2. Mobile Application:** 
+    5.1.1 Hosted mode:
 
-      **5.2.1. User version:**
+      - ensure both devices(phone and laptop) are connected to the same WiFi
+      - From `codebase/webApp` run `npm run host:full`
+      - Open the **Network** URL printed by Vite on the phone (example: `http://192.168.x.x:3000`)
+
+   5.2. Mobile Application:
+
+      5.2.1. User version:
+
         - Navigate to `codebase/mobile_app` 
         - Run `flutter run` to start the mobile application 
       
-      **5.2.2. Driver version:**
+      5.2.2. Driver version:
+
         - Navigate to `codebase/mobile_app` 
-        - Run `flutter run lib/driver_main.dart` to start the driver mobile application 
+        - Run `flutter run lib/driver_main.dart` to start the driver mobile application
+        
+      5.2.3. Hosted version:
+
+        - ensure both devices(phone and laptop) are connected to the same WiFi
+        - Navigate to `codebase/mobile_app` 
+        - Run `flutter run --dart-define=API_BASE_URL=http://<laptopIp>:<dbPort>` to start the mobile application 
 

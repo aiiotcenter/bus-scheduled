@@ -23,7 +23,7 @@ class LoginHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 400,
+      height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
         color: background,
@@ -35,8 +35,8 @@ class LoginHeader extends StatelessWidget {
           // Bus logo ===================================================
           const Image(
             image: AssetImage('assets/BusLogoWhite.png'),
-            width: 150,
-            height: 150,
+            width: 70,
+            height: 70,
           ),
 
           const SizedBox(height: 20),
@@ -48,7 +48,7 @@ class LoginHeader extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 30,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w400,
             ),
           ),
 
@@ -59,7 +59,7 @@ class LoginHeader extends StatelessWidget {
             style: TextStyle(
               color: textColor,
               fontSize: 25,
-              fontWeight: FontWeight.w400,
+              fontWeight: FontWeight.w200,
             ),
           ),
         ],
