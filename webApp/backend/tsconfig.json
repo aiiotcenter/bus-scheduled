@@ -9,7 +9,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": ["esnext"],
-    "types": ["node"],
+    "types": ["node", "jest"],
     "esModuleInterop": true, //allows TypeScript to correctly import CommonJS modules (like dotenv) using modern ES syntax
 
 
@@ -25,7 +25,7 @@
     "exactOptionalPropertyTypes": true,
     "skipLibCheck": true,
 
-    // Optional clean-code flags
+    // Optional flags
     // "noImplicitReturns": true,
     // "noUnusedLocals": true,
     // "noUnusedParameters": true

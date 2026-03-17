@@ -247,6 +247,17 @@ To run the Near East University Bus Tracker system, follow these steps:
       5.2.3. Hosted version:
 
         - ensure both devices(phone and laptop) are connected to the same WiFi
+        - on the phone enable USB debugging and wireless debugging from Developer optoins
+        - for the first connection, connect the phone to the laptop using a usb cable
+        - verify the phone is detected by running "flutter devices", the phone must appear in teh list
+        
+
+        - run "adb tcpip <dbPort>" to enable adb over wifi
+        - run "adb connect <mobileIp>:<dbPort>" to connect to the phone wirelessly
+        - run "adb devices" to verify the wireless connection , the phone must be in the list
+        - unplug the usb cable
+
+
         - Navigate to `codebase/mobile_app` 
         - Run `flutter run --dart-define=API_BASE_URL=http://<laptopIp>:<dbPort>` to start the mobile application 
 
