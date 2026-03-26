@@ -91,6 +91,13 @@ describe("AuthService -> setPassword", () => {
     //? Verify Set Password Token 
     // ===================================================================================================================
 
+    // unit tests: 
+    // - should return null when token is invalid
+    // - should return null when user not found
+    // - should return null when user already has password
+    // - should return userData when user exists and has no password
+
+
     describe("verifySetPasswordToken", () => {
 
 
@@ -161,6 +168,10 @@ describe("AuthService -> setPassword", () => {
     //? Send Validation Email 
     // ===================================================================================================================
 
+    // unit test :
+    // - should return 200 when validation email sent
+    // - should return 500 when email isn't sent
+
     describe("sendValidateEmail", () => {
         test("should return 200 when validation email sent", async () => {
             const AuthHelperModule = require("../../src/helpers/authHelpher");
@@ -195,6 +206,14 @@ describe("AuthService -> setPassword", () => {
     //? Set Password 
     // ===================================================================================================================
 
+    // unit tests: 
+    // - should return 401 when token is invalid
+    // - should return 500 when passwords are missing
+    // - should return 500 when passwords do not match
+    // - should return 500 when bcrypt.hash throws
+    // - should return 401 when update does not update any rows
+    // - should return 200 when password is set and login session cleared
+    
     describe("-", () => {
         test("should return 401 when token is invalid", async () => {
             const req = createReq({ params: { token: "invalid" }, body: { newPassword: "password", confirmPassword: "password" } });

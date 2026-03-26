@@ -44,6 +44,14 @@ type MockedIncrement = jest.MockedFunction<typeof UserModel.increment>;
 
 
 // ==================================================================================================
+// unit tests covered in this file:
+// - should return 401 when token is invalid
+// - should return 500 when verifyResetPasswordUrlTokenFromRequest throws an error
+// - should return 500 when passwords are missing
+// - should return 500 when passwords do not match
+// - should return 500 when bcrypt.hash throws
+// - should return 500 when update does not update any rows
+// - should return 200 when password is updated and version incremented
 
 describe("AuthService -> resetPassword", () => {
     const mockFindOne = UserModel.findOne as unknown as MockedFindOne;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1773778374322" clover="3.2.0">
-  <project timestamp="1773778374322" name="All files">
-    <metrics statements="418" coveredstatements="270" conditionals="111" coveredconditionals="68" methods="62" coveredmethods="18" elements="591" coveredelements="356" complexity="0" loc="418" ncloc="418" packages="7" files="29" classes="29"/>
+<coverage generated="1774502774070" clover="3.2.0">
+  <project timestamp="1774502774071" name="All files">
+    <metrics statements="500" coveredstatements="366" conditionals="148" coveredconditionals="97" methods="69" coveredmethods="29" elements="717" coveredelements="492" complexity="0" loc="500" ncloc="500" packages="8" files="30" classes="30"/>
     <package name="config">
       <metrics statements="8" coveredstatements="8" conditionals="14" coveredconditionals="13" methods="0" coveredmethods="0"/>
       <file name="database.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\config\database.ts">
@@ -34,42 +34,42 @@
       </file>
       <file name="userEnum.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\enums\userEnum.ts">
         <metrics statements="15" coveredstatements="15" conditionals="10" coveredconditionals="10" methods="5" coveredmethods="5"/>
-        <line num="5" count="1" type="cond" truecount="2" falsecount="0"/>
-        <line num="6" count="1" type="stmt"/>
-        <line num="7" count="1" type="stmt"/>
-        <line num="13" count="1" type="cond" truecount="2" falsecount="0"/>
-        <line num="14" count="1" type="stmt"/>
-        <line num="15" count="1" type="stmt"/>
-        <line num="21" count="1" type="cond" truecount="2" falsecount="0"/>
-        <line num="22" count="1" type="stmt"/>
-        <line num="23" count="1" type="stmt"/>
-        <line num="29" count="1" type="cond" truecount="2" falsecount="0"/>
-        <line num="30" count="1" type="stmt"/>
-        <line num="31" count="1" type="stmt"/>
-        <line num="37" count="1" type="cond" truecount="2" falsecount="0"/>
-        <line num="38" count="1" type="stmt"/>
-        <line num="39" count="1" type="stmt"/>
+        <line num="5" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="6" count="2" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="13" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="14" count="2" type="stmt"/>
+        <line num="15" count="2" type="stmt"/>
+        <line num="21" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="22" count="2" type="stmt"/>
+        <line num="23" count="2" type="stmt"/>
+        <line num="29" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="30" count="2" type="stmt"/>
+        <line num="31" count="2" type="stmt"/>
+        <line num="37" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="38" count="2" type="stmt"/>
+        <line num="39" count="2" type="stmt"/>
       </file>
     </package>
     <package name="errors">
-      <metrics statements="49" coveredstatements="26" conditionals="3" coveredconditionals="0" methods="8" coveredmethods="2"/>
+      <metrics statements="49" coveredstatements="41" conditionals="3" coveredconditionals="1" methods="8" coveredmethods="6"/>
       <file name="AppError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\AppError.ts">
         <metrics statements="3" coveredstatements="3" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="6" count="2" type="stmt"/>
-        <line num="7" count="2" type="stmt"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="6" count="9" type="stmt"/>
+        <line num="7" count="9" type="stmt"/>
       </file>
       <file name="ConflictError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\ConflictError.ts">
-        <metrics statements="5" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
       </file>
       <file name="EmailServiceError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\EmailServiceError.ts">
         <metrics statements="6" coveredstatements="1" conditionals="2" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
+        <line num="1" count="5" type="stmt"/>
         <line num="2" count="0" type="stmt"/>
         <line num="3" count="0" type="stmt"/>
         <line num="6" count="0" type="stmt"/>
@@ -78,56 +78,56 @@
       </file>
       <file name="ForbiddenError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\ForbiddenError.ts">
         <metrics statements="5" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
         <line num="4" count="0" type="stmt"/>
         <line num="5" count="0" type="stmt"/>
         <line num="8" count="0" type="stmt"/>
       </file>
       <file name="InternalError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\InternalError.ts">
-        <metrics statements="7" coveredstatements="1" conditionals="1" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="2" count="0" type="stmt"/>
-        <line num="3" count="0" type="stmt"/>
-        <line num="6" count="0" type="stmt"/>
-        <line num="7" count="0" type="stmt"/>
-        <line num="9" count="0" type="cond" truecount="0" falsecount="1"/>
-        <line num="10" count="0" type="stmt"/>
+        <metrics statements="7" coveredstatements="7" conditionals="1" coveredconditionals="1" methods="1" coveredmethods="1"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="2" count="4" type="stmt"/>
+        <line num="3" count="4" type="stmt"/>
+        <line num="6" count="4" type="stmt"/>
+        <line num="7" count="4" type="stmt"/>
+        <line num="9" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="10" count="4" type="stmt"/>
       </file>
       <file name="NotFoundError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\NotFoundError.ts">
-        <metrics statements="5" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="2" type="stmt"/>
+        <line num="5" count="2" type="stmt"/>
+        <line num="8" count="2" type="stmt"/>
       </file>
       <file name="UnauthorizedError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\UnauthorizedError.ts">
         <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
         <line num="4" count="2" type="stmt"/>
         <line num="5" count="2" type="stmt"/>
         <line num="8" count="2" type="stmt"/>
       </file>
       <file name="ValidationError.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\ValidationError.ts">
-        <metrics statements="5" coveredstatements="2" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="0" type="stmt"/>
-        <line num="5" count="0" type="stmt"/>
-        <line num="8" count="0" type="stmt"/>
+        <metrics statements="5" coveredstatements="5" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="3" type="stmt"/>
+        <line num="5" count="3" type="stmt"/>
+        <line num="8" count="3" type="stmt"/>
       </file>
       <file name="index.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\errors\index.ts">
         <metrics statements="8" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-        <line num="1" count="4" type="stmt"/>
-        <line num="3" count="4" type="stmt"/>
-        <line num="4" count="4" type="stmt"/>
-        <line num="5" count="4" type="stmt"/>
-        <line num="6" count="4" type="stmt"/>
-        <line num="7" count="4" type="stmt"/>
-        <line num="8" count="4" type="stmt"/>
-        <line num="9" count="4" type="stmt"/>
+        <line num="1" count="5" type="stmt"/>
+        <line num="3" count="5" type="stmt"/>
+        <line num="4" count="5" type="stmt"/>
+        <line num="5" count="5" type="stmt"/>
+        <line num="6" count="5" type="stmt"/>
+        <line num="7" count="5" type="stmt"/>
+        <line num="8" count="5" type="stmt"/>
+        <line num="9" count="5" type="stmt"/>
       </file>
     </package>
     <package name="helpers">
@@ -354,6 +354,94 @@
         <line num="5" count="1" type="stmt"/>
         <line num="24" count="1" type="stmt"/>
         <line num="60" count="1" type="stmt"/>
+      </file>
+    </package>
+    <package name="services">
+      <metrics statements="82" coveredstatements="81" conditionals="37" coveredconditionals="28" methods="7" coveredmethods="7"/>
+      <file name="driverService.ts" path="C:\Users\sondo\Desktop\Graduation Project 1 - Bus Tracker\Implementation\codebase\webApp\backend\src\services\driverService.ts">
+        <metrics statements="82" coveredstatements="81" conditionals="37" coveredconditionals="28" methods="7" coveredmethods="7"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="1" type="stmt"/>
+        <line num="8" count="1" type="stmt"/>
+        <line num="9" count="1" type="stmt"/>
+        <line num="10" count="1" type="stmt"/>
+        <line num="13" count="1" type="stmt"/>
+        <line num="16" count="1" type="stmt"/>
+        <line num="19" count="1" type="stmt"/>
+        <line num="20" count="1" type="stmt"/>
+        <line num="23" count="1" type="stmt"/>
+        <line num="24" count="1" type="stmt"/>
+        <line num="26" count="1" type="stmt"/>
+        <line num="27" count="1" type="stmt"/>
+        <line num="29" count="1" type="stmt"/>
+        <line num="31" count="1" type="stmt"/>
+        <line num="35" count="1" type="stmt"/>
+        <line num="42" count="4" type="stmt"/>
+        <line num="43" count="4" type="stmt"/>
+        <line num="52" count="1" type="stmt"/>
+        <line num="53" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="54" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="55" count="1" type="stmt"/>
+        <line num="60" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="61" count="2" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="68" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="71" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="72" count="1" type="stmt"/>
+        <line num="74" count="1" type="cond" truecount="0" falsecount="1"/>
+        <line num="75" count="0" type="stmt"/>
+        <line num="77" count="1" type="stmt"/>
+        <line num="89" count="3" type="stmt"/>
+        <line num="91" count="1" type="stmt"/>
+        <line num="99" count="2" type="stmt"/>
+        <line num="109" count="2" type="stmt"/>
+        <line num="121" count="3" type="stmt"/>
+        <line num="122" count="3" type="cond" truecount="1" falsecount="1"/>
+        <line num="126" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="128" count="2" type="stmt"/>
+        <line num="137" count="1" type="stmt"/>
+        <line num="149" count="2" type="stmt"/>
+        <line num="153" count="1" type="stmt"/>
+        <line num="162" count="4" type="stmt"/>
+        <line num="163" count="4" type="cond" truecount="2" falsecount="0"/>
+        <line num="164" count="4" type="cond" truecount="1" falsecount="0"/>
+        <line num="165" count="1" type="stmt"/>
+        <line num="168" count="3" type="stmt"/>
+        <line num="173" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="174" count="1" type="stmt"/>
+        <line num="177" count="1" type="stmt"/>
+        <line num="180" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="181" count="1" type="stmt"/>
+        <line num="183" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="184" count="1" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="195" count="3" type="stmt"/>
+        <line num="196" count="3" type="cond" truecount="2" falsecount="0"/>
+        <line num="197" count="3" type="cond" truecount="1" falsecount="0"/>
+        <line num="198" count="1" type="stmt"/>
+        <line num="201" count="2" type="stmt"/>
+        <line num="202" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="204" count="2" type="stmt"/>
+        <line num="235" count="1" type="stmt"/>
+        <line num="245" count="1" type="stmt"/>
+        <line num="246" count="1" type="stmt"/>
+        <line num="248" count="1" type="stmt"/>
+        <line num="249" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="251" count="1" type="stmt"/>
+        <line num="253" count="1" type="cond" truecount="1" falsecount="0"/>
+        <line num="254" count="1" type="stmt"/>
+        <line num="262" count="1" type="stmt"/>
+        <line num="264" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="265" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="266" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="267" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="268" count="1" type="stmt"/>
+        <line num="270" count="1" type="stmt"/>
+        <line num="280" count="1" type="stmt"/>
+        <line num="287" count="2" type="cond" truecount="1" falsecount="0"/>
+        <line num="288" count="1" type="stmt"/>
+        <line num="290" count="1" type="stmt"/>
       </file>
     </package>
     <package name="services.authService">

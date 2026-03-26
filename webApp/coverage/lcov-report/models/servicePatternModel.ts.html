@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for models/loginAttempModel.ts</title>
+    <title>Code coverage report for models/servicePatternModel.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,7 +19,7 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> loginAttempModel.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> servicePatternModel.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
@@ -101,38 +101,11 @@
 <a name='L36'></a><a href='#L36'>36</a>
 <a name='L37'></a><a href='#L37'>37</a>
 <a name='L38'></a><a href='#L38'>38</a>
-<a name='L39'></a><a href='#L39'>39</a>
-<a name='L40'></a><a href='#L40'>40</a>
-<a name='L41'></a><a href='#L41'>41</a>
-<a name='L42'></a><a href='#L42'>42</a>
-<a name='L43'></a><a href='#L43'>43</a>
-<a name='L44'></a><a href='#L44'>44</a>
-<a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a>
-<a name='L48'></a><a href='#L48'>48</a>
-<a name='L49'></a><a href='#L49'>49</a>
-<a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a>
-<a name='L52'></a><a href='#L52'>52</a>
-<a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a>
-<a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a>
-<a name='L58'></a><a href='#L58'>58</a>
-<a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L39'></a><a href='#L39'>39</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -165,89 +138,53 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">//======================================================================================================================
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//======================================================================================================================
 //?  Imports
 //======================================================================================================================
-import {Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import {sequelize} from '../config/database';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { sequelize } from '../config/database';
 &nbsp;
-//import interface
-import { LoginAttemptData } from '../interfaces/loginAttemptInterface';
-&nbsp;
-//======================================================================================================================
-&nbsp;
-class LoginAttemptModel extends Model&lt;InferAttributes&lt;LoginAttemptModel&gt;, InferCreationAttributes&lt;LoginAttemptModel&gt;&gt;{
-    declare attemptID: CreationOptional&lt;number&gt;;
-    declare userEmail: string;
-    declare IPaddress: string | null;
-    declare attemptLocation: string | null;
-    declare attemptSuccessful: boolean;
-    declare attemptTime: string;
-    declare attemptDate: Date;
+//==============================================================================================================================================
+//? Model class
+//==============================================================================================================================================
+class ServicePatternModel extends Model&lt;InferAttributes&lt;ServicePatternModel&gt;, InferCreationAttributes&lt;ServicePatternModel&gt;&gt; {
+  declare servicePatternId: string;
+  declare title: string;
 }
 &nbsp;
 //======================================================================================================================
-&nbsp;
-LoginAttemptModel.init(
-    {
-        attemptID:{
-            type: DataTypes.BIGINT,
-            autoIncrement: true, 
-            primaryKey: true,
-            allowNull: false
-        },userEmail:{
-            type: DataTypes.STRING(100),
-            allowNull: false
-        }, IPaddress: {
-            type: DataTypes.STRING(100),
-            allowNull: true
-        }, attemptLocation:{
-            type: DataTypes.STRING(100),
-            allowNull:true
-        }, attemptSuccessful:{
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        }, attemptTime:{
-            type:DataTypes.STRING,
-            allowNull:false,
-        },attemptDate:{
-            type: DataTypes.DATEONLY,
-            allowNull:false,
-        }
-    },
-  {
-    sequelize, 
-    tableName: 'login_attempt',
-    timestamps: false
-  }
-)
-&nbsp;
+//? Initialize the table
 //======================================================================================================================
+ServicePatternModel.init(
+  {
+    servicePatternId: {
+      type: DataTypes.STRING(4),
+      primaryKey: true,
+      allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING(30),
+      allowNull: false,
+    },
+  },
+  {
+    sequelize,
+    tableName: 'service_patterns',
+    timestamps: false,
+  }
+);
+//======================================================================================================================================
 &nbsp;
-export default LoginAttemptModel;</pre></td></tr></table></pre>
+export default ServicePatternModel;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-26T05:26:14.005Z
+                at 2026-03-22T10:39:55.068Z
             </div>
         <script src="../prettify.js"></script>
         <script>

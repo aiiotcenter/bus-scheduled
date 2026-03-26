@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for models/loginAttempModel.ts</title>
+    <title>Code coverage report for models/scheduleModel.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,13 +19,13 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> loginAttempModel.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">models</a> scheduleModel.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>4/4</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
@@ -118,19 +118,12 @@
 <a name='L53'></a><a href='#L53'>53</a>
 <a name='L54'></a><a href='#L54'>54</a>
 <a name='L55'></a><a href='#L55'>55</a>
-<a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a>
-<a name='L58'></a><a href='#L58'>58</a>
-<a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L56'></a><a href='#L56'>56</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -179,75 +172,70 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span></td><td class="text"><pre class="prettyprint lang-js">//======================================================================================================================
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//======================================================================================================================
 //?  Imports
 //======================================================================================================================
-import {Model, DataTypes, InferAttributes, InferCreationAttributes, CreationOptional } from 'sequelize';
-import {sequelize} from '../config/database';
+import { Model, DataTypes, InferAttributes, InferCreationAttributes } from 'sequelize';
+import { sequelize } from '../config/database';
+import ServicePatternModel from './servicePatternModel';
 &nbsp;
-//import interface
-import { LoginAttemptData } from '../interfaces/loginAttemptInterface';
-&nbsp;
-//======================================================================================================================
-&nbsp;
-class LoginAttemptModel extends Model&lt;InferAttributes&lt;LoginAttemptModel&gt;, InferCreationAttributes&lt;LoginAttemptModel&gt;&gt;{
-    declare attemptID: CreationOptional&lt;number&gt;;
-    declare userEmail: string;
-    declare IPaddress: string | null;
-    declare attemptLocation: string | null;
-    declare attemptSuccessful: boolean;
-    declare attemptTime: string;
-    declare attemptDate: Date;
+//==============================================================================================================================================
+//? Model class
+//==============================================================================================================================================
+class ScheduleModel extends Model&lt;InferAttributes&lt;ScheduleModel&gt;, InferCreationAttributes&lt;ScheduleModel&gt;&gt; {
+  declare scheduleId: string;
+  declare date: Date;
+  declare day: string;
+  declare servicePatternId: string;
 }
 &nbsp;
 //======================================================================================================================
-&nbsp;
-LoginAttemptModel.init(
-    {
-        attemptID:{
-            type: DataTypes.BIGINT,
-            autoIncrement: true, 
-            primaryKey: true,
-            allowNull: false
-        },userEmail:{
-            type: DataTypes.STRING(100),
-            allowNull: false
-        }, IPaddress: {
-            type: DataTypes.STRING(100),
-            allowNull: true
-        }, attemptLocation:{
-            type: DataTypes.STRING(100),
-            allowNull:true
-        }, attemptSuccessful:{
-            type: DataTypes.BOOLEAN,
-            allowNull: false
-        }, attemptTime:{
-            type:DataTypes.STRING,
-            allowNull:false,
-        },attemptDate:{
-            type: DataTypes.DATEONLY,
-            allowNull:false,
-        }
-    },
-  {
-    sequelize, 
-    tableName: 'login_attempt',
-    timestamps: false
-  }
-)
-&nbsp;
+//? Initialize the table
 //======================================================================================================================
+ScheduleModel.init(
+  {
+    scheduleId: {
+      type: DataTypes.STRING(4),
+      primaryKey: true,
+      allowNull: false,
+    },
+    date: {
+      type: DataTypes.DATEONLY,
+      allowNull: false,
+    },
+    day: {
+      type: DataTypes.STRING(10),
+      allowNull: false,
+    },
+    servicePatternId: {
+      type: DataTypes.STRING(4),
+      allowNull: false,
+      references: {
+        model: ServicePatternModel,
+        key: 'servicePatternId',
+      },
+      onDelete: 'CASCADE',
+      onUpdate: 'CASCADE',
+    },
+  },
+  {
+    sequelize,
+    tableName: 'schedules',
+    timestamps: false,
+  }
+);
+//======================================================================================================================================
 &nbsp;
-export default LoginAttemptModel;</pre></td></tr></table></pre>
+export default ScheduleModel;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-26T05:26:14.005Z
+                at 2026-03-22T10:39:55.068Z
             </div>
         <script src="../prettify.js"></script>
         <script>
