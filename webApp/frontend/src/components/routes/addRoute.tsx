@@ -2,12 +2,12 @@
 //? Importing
 //======================================================================================
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { COLORS } from '../../styles/colorPalette';
 import { routeStatus } from '../../enums/statusEnums';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 interface RouteData {
   title: string;
@@ -120,13 +120,13 @@ const AddRoute: React.FC<AddRouteProps> = ({ onClose, onSuccess }) => {
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
-      } else {
-        setError(t('addForm.error'));
-      }
+      
+      // -----------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
+      
+      // -----------------------------------------------
     } finally {
       setLoading(false);
     }
@@ -138,14 +138,12 @@ const AddRoute: React.FC<AddRouteProps> = ({ onClose, onSuccess }) => {
       try {
         const response = await apiClient.get('/api/admin/stations/picker');
         setStations(response.data.data || response.data || []);
-      } catch (err: any) {
-        if (axios.isAxiosError(err)) {
-          const messageKey = err.response?.data?.message as string | undefined;
-          setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.stationsLoadError'));
-        } else {
-          setError(t('addForm.stationsLoadError'));
-        }
+      // -----------------------------------------------  
+      } catch (err: unknown) {
+        const messageKey = tryGetApiErrorMessageKey(err);
+        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.stationsLoadError'));
       }
+      
     };
 
     fetchStations();

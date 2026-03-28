@@ -6,6 +6,7 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../../services/apiError';
 
 //======================================================================================
 //? Types
@@ -64,10 +65,11 @@ const RemoveScheduledTrip: React.FC<RemoveScheduledTripProps> = ({
       onSuccess(serverMessageKey ? tCommon(serverMessageKey, { defaultValue: serverMessageKey }) : tCommon('tripForm.success.removed'));
       onClose();
       await onRefresh();
+      // ------------------------------------------------------------
     } catch (err: unknown) {
-      const axErr = err as { response?: { data?: { message?: string } } };
-      const serverMessageKey = String(axErr?.response?.data?.message || '').trim();
-      setError(serverMessageKey ? tCommon(serverMessageKey, { defaultValue: serverMessageKey }) : tCommon('tripForm.errors.notRemoved'));
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tCommon(messageKey, { defaultValue: messageKey }) : tCommon('tripForm.errors.notRemoved'));
+    // -----------------------------------------------------------------------
     } finally {
       setLoading(false);
     }

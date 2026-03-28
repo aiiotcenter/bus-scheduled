@@ -1,13 +1,13 @@
 //======================================================================================
 //? Importing
 //======================================================================================
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState } from 'react';
 import { busStatus } from '../../enums/statusEnums';
 import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 
 interface BusData{
@@ -54,13 +54,11 @@ const AddBus = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => 
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
-      } else {
-        setError(t('addForm.error'));
-      }
+      
+    } catch (error: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
+    
     } finally {
       setLoading(false);
     }

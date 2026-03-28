@@ -4,6 +4,7 @@
 //==========================================================================================================
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIPaddressAndUserLocation = void 0;
+const apiClient_1 = require("../../services/apiClient");
 //==========================================================================================================
 const getIPaddressAndUserLocation = async (req) => {
     const unknownResult = { ip: null, location: null };
@@ -13,12 +14,12 @@ const getIPaddressAndUserLocation = async (req) => {
             console.warn("IP address not available, skipping location lookup");
             return unknownResult;
         }
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
+        const response = await apiClient_1.apiClient.getJson(`http://ip-api.com/json/${ip}`);
         if (!response.ok) {
             console.warn("Failed to fetch location data, skipping location lookup");
             return { ip, location: null };
         }
-        const locationJSONdata = (await response.json());
+        const locationJSONdata = response.data;
         if (!locationJSONdata || Object.keys(locationJSONdata).length === 0) {
             console.warn("No location data found for the given IP address, skipping location lookup");
             return { ip, location: null };

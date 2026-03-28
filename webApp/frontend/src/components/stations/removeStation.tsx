@@ -2,11 +2,11 @@
 //? Importing
 //======================================================================================
 import React, { useState } from 'react';
-import axios from 'axios';
 import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../services/apiError';
 
 interface RemoveStationProps {
   stationId: string;
@@ -43,13 +43,11 @@ const RemoveStation: React.FC<RemoveStationProps> = ({
 
       onSuccess();
       onClose();
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const backendMessageKey = err.response?.data?.message as string | undefined;
-        setError(backendMessageKey ? tGlobal(backendMessageKey, { defaultValue: backendMessageKey }) : t('removeDialog.error'));
-      } else {
-        setError(t('removeDialog.error'));
-      }
+    // -------------------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('removeDialog.error'));
+    // -------------------------------------------------------
     } finally {
       setIsLoading(false);
     }

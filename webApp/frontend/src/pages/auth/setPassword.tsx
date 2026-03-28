@@ -3,7 +3,6 @@
 // ============================================================================================================== 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import loginPicture from '../../assets/loginPicture.png';
 import busTrackerLogo from '../../assets/busTrackerlogo.png';
 
@@ -15,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 // ============================================================================================================== 
 //? SetPassword
@@ -27,6 +27,7 @@ const SetPassword = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const { t } = useTranslation('auth/setPasswordPage');
+  const { t: tGlobal } = useTranslation('translation');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
@@ -52,20 +53,14 @@ const SetPassword = () => {
       // Password reset successful, navigate to login
       navigate('/');
       return;
-
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        const backendMessageKey = error.response?.data?.message as string | undefined;
-        if (backendMessageKey) {
-          setError(t(backendMessageKey, { ns: 'translation' }));
-        } else {
-          setError(t('common.errors.internal', { ns: 'translation' }));
-        }
-      } else {
-        setError(t('common.errors.internal', { ns: 'translation' }));
-      }
+ 
+      // ---------------------------------------------
+    } catch (error: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tGlobal('common.errors.internal'));
       console.error('Error occured while Setting Password:', error);
 
+      // ---------------------------------------------
     } finally {
       setLoading(false);
     }

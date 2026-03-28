@@ -2,13 +2,13 @@
 //? Import 
 //================================================================================
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { userGender } from '../../enums/statusEnums';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 import type { Driver } from '../../types/drivers';
 
@@ -64,9 +64,11 @@ const UpdateDriver: React.FC<UpdateDriverProps> = ({ driver, onClose, onSuccess 
           setFormData(nextData);
           setInitialData(nextData);
         }
-      } catch (err) {
-        void err;
-        setError(t('updateForm.loadError'));
+      // -----------------------------------------------
+      } catch (err: unknown) {
+        const messageKey = tryGetApiErrorMessageKey(err);
+        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.loadError'));
+      // -----------------------------------------------
       } finally {
         setInitialLoading(false);
       }
@@ -119,16 +121,9 @@ const UpdateDriver: React.FC<UpdateDriverProps> = ({ driver, onClose, onSuccess 
 
       onSuccess();
       onClose();
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        if (messageKey) {
-          setError(tGlobal(messageKey, { defaultValue: messageKey }));
-          return;
-        }
-      }
-
-      setError(t('updateForm.error'));
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.error'));
     } finally {
       setIsLoading(false);
     }

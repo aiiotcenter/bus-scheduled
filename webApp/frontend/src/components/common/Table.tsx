@@ -8,6 +8,7 @@ import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKey } from '../../services/apiError';
 
 
 // ========================================================================
@@ -70,6 +71,7 @@ const Table: React.FC<TableProps> = ({
   errorComponent
 }) => {
   const { t } = useTranslation('Tabele');
+  const { t: tGlobal } = useTranslation('translation');
   const [data, setData] = useState<TableData[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
@@ -99,8 +101,9 @@ const Table: React.FC<TableProps> = ({
       } else if (columnConfig) {
         setColumns(columnConfig.map(col => col.key));
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching data');
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKey(err);
+      setError(tGlobal(messageKey, { defaultValue: messageKey }));
     } finally {
       setLoading(false);
     }

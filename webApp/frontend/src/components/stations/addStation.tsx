@@ -2,7 +2,6 @@
 //? Importing
 //======================================================================================
 import React, { useMemo, useState } from 'react';
-import axios from 'axios';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import { COLORS } from '../../styles/colorPalette';
@@ -11,6 +10,7 @@ import { stationDefaultType } from '../../enums/statusEnums';
 import type { StationDefaultType } from '../../enums/statusEnums';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../services/apiError';
 
 interface StationData {
   stationName: string;
@@ -119,13 +119,11 @@ const AddStation: React.FC<AddStationProps> = ({ onClose, onSuccess }) => {
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
-      } else {
-        setError(t('addForm.error'));
-      }
+    // -------------------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
+    // -------------------------------------------------------
     } finally {
       setLoading(false);
     }

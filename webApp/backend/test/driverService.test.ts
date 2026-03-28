@@ -3,16 +3,16 @@
 //? Unit Tests
 //==========================================================================================================
 
-import UserModel from '../../../src/models/userModel'
-import ScheduledTripsModel from '../../../src/models/scheduledTripsModel'
-import { DriverService } from "../../../src/services/driverService";
+import UserModel from '@src/models/userModel'
+import ScheduledTripsModel from '@src/models/scheduledTripsModel'
+import { DriverService } from "@src/services/driverService";
 
-import { ConflictError, InternalError, NotFoundError, ValidationError } from "../../../src/errors";
-import { gender, role, status } from "../../../src/enums/userEnum";
+import { ConflictError, InternalError, NotFoundError, ValidationError } from "@src/errors";
+import { gender, role, status } from "@src/enums/userEnum";
 import { Op } from 'sequelize';
 
 // mock models/helpers ------------------------------------------------------------------------
-jest.mock("../../../src/models/userModel", () => ({
+jest.mock("@src/models/userModel", () => ({
     __esModule: true,
     default: {
         findOne: jest.fn(),
@@ -26,29 +26,29 @@ jest.mock("../../../src/models/userModel", () => ({
     },
 }));
 
-jest.mock("../../../src/models/scheduledTripsModel", () => ({
+jest.mock("@src/models/scheduledTripsModel", () => ({
     __esModule: true,
     default: {
         findAll: jest.fn(),
     },
 }));
 
-jest.mock("../../../src/models/scheduleModel", () => ({
+jest.mock("@src/models/scheduleModel", () => ({
     __esModule: true,
     default: {},
 }));
 
-jest.mock("../../../src/models/routeModel", () => ({
+jest.mock("@src/models/routeModel", () => ({
     __esModule: true,
     default: {},
 }));
 
-jest.mock("../../../src/models/busModel", () => ({
+jest.mock("@src/models/busModel", () => ({
     __esModule: true,
     default: {},
 }));
 
-jest.mock("../../../src/helpers/userHelper", () => {
+jest.mock("@src/helpers/userHelper", () => {
     const mockUserHelperInstance = {
         add: jest.fn(),
         remove: jest.fn(),
@@ -62,7 +62,7 @@ jest.mock("../../../src/helpers/userHelper", () => {
     };
 });
 
-jest.mock("../../../src/helpers/scheduleHelper", () => {
+jest.mock("@src/helpers/scheduleHelper", () => {
     const mockScheduleHelperInstance = {
         formatDateForMobileUi: jest.fn(),
         normalizeTimeToHourMinute: jest.fn(),
@@ -75,12 +75,12 @@ jest.mock("../../../src/helpers/scheduleHelper", () => {
     };
 });
 
-jest.mock("../../../src/helpers/colorHelper", () => ({
+jest.mock("@src/helpers/colorHelper", () => ({
     __esModule: true,
     normalizeColorToArgbInt: jest.fn(),
 }));
 
-jest.mock("../../../src/services/authService", () => {
+jest.mock("@src/services/authService", () => {
     const mockAuthServiceInstance = {
         sendValidateEmail: jest.fn(),
     };
@@ -142,20 +142,20 @@ describe("DriverService", () => {
     beforeEach(() => {
         jest.clearAllMocks();
 
-        const UserHelperModule = require("../../../src/helpers/userHelper");
+        const UserHelperModule = require("@src/helpers/userHelper");
         UserHelperModule.mockUserHelperInstance.add.mockClear();
         UserHelperModule.mockUserHelperInstance.remove.mockClear();
         UserHelperModule.mockUserHelperInstance.update.mockClear();
 
-        const AuthServiceModule = require("../../../src/services/authService");
+        const AuthServiceModule = require("@src/services/authService");
         AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockClear();
 
 
-        const ScheduleHelperModule = require("../../../src/helpers/scheduleHelper");
+        const ScheduleHelperModule = require("@src/helpers/scheduleHelper");
         ScheduleHelperModule.mockScheduleHelperInstance.formatDateForMobileUi.mockClear();
         ScheduleHelperModule.mockScheduleHelperInstance.normalizeTimeToHourMinute.mockClear();
 
-        const ColorHelperModule = require("../../../src/helpers/colorHelper");
+        const ColorHelperModule = require("@src/helpers/colorHelper");
         (ColorHelperModule.normalizeColorToArgbInt as jest.Mock).mockClear();
 
         jest.spyOn(console, "error").mockImplementation(() => undefined);
@@ -173,11 +173,11 @@ describe("DriverService", () => {
         test("should add driver and send validation email", async () => {
 
             // mock add function 
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockResolvedValueOnce(undefined);
 
             // mock success of email sending 
-            const AuthServiceModule = require("../../../src/services/authService");
+            const AuthServiceModule = require("@src/services/authService");
             AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockResolvedValueOnce({ status: 200 } as any);
 
             const payload = { email: "test@example.com", role: role.driver, gender: gender.male };
@@ -221,7 +221,7 @@ describe("DriverService", () => {
 
         test("should throw ValidationError when required fields are missing", async () => {
 
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(
                 new ValidationError("common.errors.validation.fillAllFields")
             );
@@ -234,7 +234,7 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should throw error when email already exists in database", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(new ConflictError("common.errors.validation.duplicate"));
 
             const promise = driverService.addDriver({ email: "test@example.com" });
@@ -247,10 +247,10 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should return InternalServerError for unknown errors", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockResolvedValueOnce(undefined);
 
-            const AuthServiceModule = require("../../../src/services/authService");
+            const AuthServiceModule = require("@src/services/authService");
             AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockRejectedValueOnce(new Error("email failed"));
 
             await expect(driverService.addDriver({ email: "test@example.com" })).rejects.toBeInstanceOf(InternalError);
@@ -266,7 +266,7 @@ describe("DriverService", () => {
 
     describe("removeDriver", () => {
         test("should remove driver successfully", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockResolvedValueOnce(undefined);
 
             const result = await driverService.removeDriver("D123");
@@ -279,7 +279,7 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should throw NotFoundError when driver is not found", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new NotFoundError("common.errors.notFound"));
 
             await expect(driverService.removeDriver("D123")).rejects.toBeInstanceOf(NotFoundError);
@@ -291,10 +291,12 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
         
         test("should throw error when an unexpected error occurs", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("Unexpected error"));
 
-            await expect(driverService.removeDriver("D123")).rejects.toThrow("Unexpected error");
+            const promise = driverService.removeDriver("D123");
+
+            await expect(promise).rejects.toThrow("Unexpected error");
 
             expect(UserHelperModule.mockUserHelperInstance.remove).toHaveBeenCalledTimes(1);
             expect(UserHelperModule.mockUserHelperInstance.remove).toHaveBeenCalledWith(UserModel, "id", "D123");
@@ -309,7 +311,7 @@ describe("DriverService", () => {
 
     describe("updateDriver", () => {
         test("should return updated message when updated successfully", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.update.mockResolvedValueOnce({ updated: true } as any);
 
             const result = await driverService.updateDriver({ id: "D123", email: "test@example.com" });
@@ -319,7 +321,7 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should return noChanges message when no data changaed", async () => {
-            const UserHelperModule = require("../../../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.update.mockResolvedValueOnce({ updated: false } as any);
 
             const result = await driverService.updateDriver({ id: "D123", email: "test@example.com" });
@@ -494,11 +496,11 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should return grouped driver schedule successfully", async () => {
-            const ScheduleHelperModule = require("../../../src/helpers/scheduleHelper");
+            const ScheduleHelperModule = require("@src/helpers/scheduleHelper");
             ScheduleHelperModule.mockScheduleHelperInstance.formatDateForMobileUi.mockReturnValueOnce("25/03/2026");
             ScheduleHelperModule.mockScheduleHelperInstance.normalizeTimeToHourMinute.mockReturnValueOnce("08:00");
 
-            const ColorHelperModule = require("../../../src/helpers/colorHelper");
+            const ColorHelperModule = require("@src/helpers/colorHelper");
             (ColorHelperModule.normalizeColorToArgbInt as jest.Mock).mockReturnValueOnce(0xff112233);
 
             const trips = [

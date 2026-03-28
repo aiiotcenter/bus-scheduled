@@ -2,7 +2,6 @@
 //? Importing
 //====================================================================================================================================
 import React, { useState } from 'react';
-import axios from 'axios';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 
 import { userGender, userRole, userStatus } from '../../enums/statusEnums';
@@ -10,6 +9,7 @@ import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 //====================================================================================================================================
 interface AddDriverProps {
@@ -82,14 +82,13 @@ const AddDriver: React.FC<AddDriverProps> = ({ onClose, onSuccess }) => {
       
       onSuccess(); // refresh table and trigger success message
       onClose(); //close the model
-      //-----------------------------------------------
-    } catch (error:any) {
-      if (axios.isAxiosError(error)) {
-        const messageKey = error.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
-      } else {
-        setError(t('addForm.error'));
-      }
+    //-----------------------------------------------
+
+    } catch (error: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('addForm.error'));
+    
+    //-----------------------------------------------
     } finally {
       setLoading(false);
     }

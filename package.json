@@ -4,13 +4,13 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "seed": "cd backend && npx ts-node src/database/constructDatabase.ts",
+    "seed": "cd webApp/backend && npx ts-node src/database/constructDatabase.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"tsc -w -p backend/tsconfig.json\" \"tsc -w -p frontend/tsconfig.json\" \"nodemon backend/dist/server.js\"",
-    "build:backend": "tsc -p backend/tsconfig.json",
-    "build:frontend": "tsc -p frontend/tsconfig.json",
+    "dev": "concurrently \"tsc -w -p webApp/backend/tsconfig.json\" \"tsc -w -p webApp/frontend/tsconfig.json\" \"nodemon webApp/backend/dist/server.js\"",
+    "build:backend": "tsc -p webApp/backend/tsconfig.json",
+    "build:frontend": "tsc -p webApp/frontend/tsconfig.json",
     "build": "npm run build:backend && npm run build:frontend",
-    "start": "npm run build && concurrently \"nodemon backend/dist/server.js\" \"cd frontend && npm run dev\"",
+    "start": "npm run build && concurrently \"nodemon webApp/backend/dist/server.js\" \"cd webApp/frontend && npm run dev\"",
     "host": "vite host"
   },
   "keywords": [],

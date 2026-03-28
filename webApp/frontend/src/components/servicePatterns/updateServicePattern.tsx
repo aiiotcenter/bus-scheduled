@@ -9,6 +9,7 @@ import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../services/apiError';
 
 //===============================================================================================
 //? Types
@@ -134,22 +135,21 @@ const UpdateServicePattern = ({
       onUpdated(t('success.updated'));
       onClose();
       await onRefresh();
+    // -------------------------------------------------------
     } catch (err: unknown) {
-      const maybeAxiosError = err as {
-        response?: { status?: number; data?: { message?: unknown } };
-        message?: unknown;
-      };
-
+      const maybeAxiosError = err as { response?: { status?: number } };
       const status = typeof maybeAxiosError?.response?.status === 'number' ? maybeAxiosError.response.status : undefined;
-      const backendMsgRaw = typeof maybeAxiosError?.response?.data?.message === 'string' ? maybeAxiosError.response.data.message : '';
-      const backendMsg = backendMsgRaw ? tGlobal(backendMsgRaw, { defaultValue: backendMsgRaw }) : '';
-      const msg = backendMsg || tGlobal('common.errors.internal');
+
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      const msg = messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tGlobal('common.errors.internal');
       setUpdateError(status ? `${msg} (HTTP ${status})` : msg);
+    // -------------------------------------------------------
     } finally {
       setUpdating(false);
     }
   };
 
+  // ===============================================================================================
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-xl max-h-[85vh] overflow-y-auto">

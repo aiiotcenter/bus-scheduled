@@ -4,7 +4,6 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import loginPicture from '../../assets/loginPicture.png';
 import busTrackerLogo from '../../assets/busTrackerlogo.png';
 import { burgundy } from '../../styles/colorPalette';
@@ -12,6 +11,7 @@ import LanguageSwitcher from '../../components/common/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 
 // =================================================================================================================
@@ -20,6 +20,7 @@ import { apiClient } from '../../services/apiClient';
 
 const Login = () => {
   const { t } = useTranslation('auth/loginPage');
+  const { t: tGlobal } = useTranslation('translation');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -52,37 +53,28 @@ const Login = () => {
           try {
           await apiClient.post('/api/auth/logout', {});
           navigate('/', { replace: true });
-          setError(t('common.errors.forbidden', { ns: 'translation' }));
-         }catch(error){
-          setError(t('common.errors.internal', { ns: 'translation' }))
+          setError(tGlobal('common.errors.forbidden'));
+          // ---------------------------------------------
+         }catch{
+          setError(tGlobal('common.errors.internal'))
          }
        
         }else{
           //if userRole is admin direct to homepage----------------------------------------------------------
           navigate('/homepage');
         }
+
+      // ---------------------------------------------
       } catch (error) {
         console.log(error);
-        setError(t('common.errors.internal', { ns: 'translation' }))
+        setError(tGlobal('common.errors.internal'))
       }
 
       
 
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
-        if (status === 404) {
-          setError(t('auth.login.userNotFound', { ns: 'translation' }));
-        } else if (status === 401) {
-          setError(t('auth.login.invalidCredentials', { ns: 'translation' }));
-        } else if (status === 500) {
-          setError(t('common.errors.internal', { ns: 'translation' }));
-        } else {
-          setError(t('common.errors.internal', { ns: 'translation' }));
-        }
-      } else {
-        setError(t('common.errors.internal', { ns: 'translation' }));
-      }
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tGlobal('common.errors.internal'));
       console.error('Login error:', error);
 
     } finally {

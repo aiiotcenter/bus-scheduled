@@ -2,13 +2,13 @@
 //? Importing
 //======================================================================================
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 import { COLORS } from '../../styles/colorPalette';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 //======================================================================================
 //? Types
@@ -66,10 +66,14 @@ const AddSchedule: React.FC<AddScheduleProps> = ({ open, onClose, onSuccess, onR
       const res = await apiClient.get('/api/admin/service-pattern/fetch');
       const rows: ServicePattern[] = Array.isArray(res.data?.data) ? res.data.data : [];
       setPatterns(rows);
-    } catch (e: any) {
-      void e;
-      setError(tBusSchedule('addForm.error'));
+      
+      // -----------------------------------------------
+    } catch (e: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(e);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('addForm.error'));
       setPatterns([]);
+
+      // -----------------------------------------------
     } finally {
       setLoadingPatterns(false);
     }
@@ -97,13 +101,12 @@ const AddSchedule: React.FC<AddScheduleProps> = ({ open, onClose, onSuccess, onR
       onSuccess(tBusSchedule('success.added'));
       resetAndClose();
       await onRefresh();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('addForm.error'));
-      } else {
-        setError(tBusSchedule('addForm.error'));
-      }
+      // -----------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('addForm.error'));
+      // -----------------------------------------------
+    
     } finally {
       setLoading(false);
     }
@@ -111,6 +114,7 @@ const AddSchedule: React.FC<AddScheduleProps> = ({ open, onClose, onSuccess, onR
 
   if (!open) return null;
 
+  // ====================================================================
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 w-full max-w-md">

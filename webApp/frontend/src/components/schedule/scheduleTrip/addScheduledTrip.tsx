@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { COLORS } from '../../../styles/colorPalette';
 
 import { apiClient } from '../../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../../services/apiError';
 
 //======================================================================================
 //? Types
@@ -115,10 +116,13 @@ const AddScheduledTrip: React.FC<AddScheduledTripProps> = ({
 
       setDrivers(driversRows);
       setBuses(busesRows);
+      // ---------------------------------------------
     } catch (e: unknown) {
-      setError(tBusSchedule('tripForm.error'));
+      const messageKey = getApiErrorMessageKeyOrUndefined(e);
+      setError(messageKey ? tCommon(messageKey, { defaultValue: messageKey }) : tBusSchedule('tripForm.error'));
       setDrivers([]);
       setBuses([]);
+      // -------------------------------------------
     } finally {
       setLoadingLists(false);
     }
@@ -155,10 +159,11 @@ const AddScheduledTrip: React.FC<AddScheduledTripProps> = ({
       onSuccess(serverMessageKey ? tCommon(serverMessageKey, { defaultValue: serverMessageKey }) : tCommon('tripForm.success.saved'));
       onClose();
       await onRefresh();
+      // ------------------------------------------
     } catch (err: unknown) {
-      const axErr = err as { response?: { data?: { message?: string } } };
-      const serverMessage = String(axErr?.response?.data?.message || '').trim();
-      setError(serverMessage ? tCommon(serverMessage, { defaultValue: serverMessage }) : tCommon('tripForm.error'));
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tCommon(messageKey, { defaultValue: messageKey }) : tCommon('tripForm.error'));
+    // -----------------------------------------------
     } finally {
       setLoading(false);
     }
@@ -262,4 +267,6 @@ const AddScheduledTrip: React.FC<AddScheduledTripProps> = ({
   );
 };
 
+
+// ===========================================================================================
 export default AddScheduledTrip;

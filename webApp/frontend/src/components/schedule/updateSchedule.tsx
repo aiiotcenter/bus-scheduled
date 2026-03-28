@@ -2,13 +2,13 @@
 //? Importing
 //======================================================================================
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 import { COLORS } from '../../styles/colorPalette';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../services/apiError';
 
 //======================================================================================
 //? Types
@@ -76,10 +76,12 @@ const UpdateSchedule: React.FC<UpdateScheduleProps> = ({ open, record, onClose, 
       const res = await apiClient.get('/api/admin/service-pattern/fetch');
       const rows: ServicePattern[] = Array.isArray(res.data?.data) ? res.data.data : [];
       setPatterns(rows);
-    } catch (e: any) {
-      void e;
-      setError(tBusSchedule('updateForm.error'));
+      // ----------------------------------------------------
+    } catch (e: unknown) {
+      const messageKey = getApiErrorMessageKeyOrUndefined(e);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('updateForm.error'));
       setPatterns([]);
+      // ------------------------------------------------
     } finally {
       setLoadingPatterns(false);
     }
@@ -110,13 +112,11 @@ const UpdateSchedule: React.FC<UpdateScheduleProps> = ({ open, record, onClose, 
       onSuccess(tBusSchedule('success.updated'));
       onClose();
       await onRefresh();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('updateForm.error'));
-      } else {
-        setError(tBusSchedule('updateForm.error'));
-      }
+      // ------------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('updateForm.error'));
+    // ------------------------------------------------
     } finally {
       setLoading(false);
     }

@@ -3,5 +3,6 @@
   "[dart]": {
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "Dart-Code.dart-code"
-  }
+  },
+  "chatgpt.commentCodeLensEnabled": false
 }

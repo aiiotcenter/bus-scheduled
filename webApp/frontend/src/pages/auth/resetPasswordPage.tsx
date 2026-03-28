@@ -3,7 +3,6 @@
 // ==============================================================================================================
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import loginPicture from '../../assets/loginPicture.png';
 import busTrackerLogo from '../../assets/busTrackerlogo.png';
 import { burgundy } from '../../styles/colorPalette';
@@ -13,6 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 
 
@@ -21,6 +21,7 @@ import { apiClient } from '../../services/apiClient';
 // ============================================================================================================== 
 const ResetPassword = () => {
   const { t } = useTranslation('auth/resetPasswordPage');
+  const { t: tGlobal } = useTranslation('translation');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
@@ -50,31 +51,26 @@ const ResetPassword = () => {
       navigate('/');
       return;
 
-    } catch (error: any) {
-      if (axios.isAxiosError(error)) {
-        const status = error.response?.status;
-        const backendMessageKey = error.response?.data?.message as string | undefined;
+    // ---------------------------------------------
+    } catch (error: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tGlobal('common.errors.internal'));
 
-        if (backendMessageKey) {
-          setError(t(backendMessageKey, { ns: 'translation' }));
-        } else {
-          setError(t('common.errors.internal', { ns: 'translation' }));
-        }
-
-        // If 401 error, token is invalid/expired
-        if (status === 401) {
-          setTimeout(() => navigate('/forgot-password'), 2000);
-        }
-      } else {
-        setError(t('common.errors.internal', { ns: 'translation' }));
-      }
+      // get error status
+      const maybeAxiosError = error as { response?: { status?: number } };
+      const status = typeof maybeAxiosError?.response?.status === 'number' ? maybeAxiosError.response.status : undefined;
+      
+      // if 401 status, then token is invalid/expired, so we direct user to forgot password page again
+      if (status === 401) setTimeout(() => navigate('/forgot-password'), 2000);
+      
       console.error('Error occurred while resetting password:', error);
-
+    // ---------------------------------------------
     } finally {
       setLoading(false);
     }
   };
 
+  // ================================================================================================
   return (
 
     <div className="min-h-screen flex relative">

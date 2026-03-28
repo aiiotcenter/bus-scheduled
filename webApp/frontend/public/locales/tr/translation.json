@@ -2,6 +2,8 @@
   "common": {
     "errors": {
       "internal": "Sunucu hatası",
+      "offline": "İnternet bağlantısı yok. Lütfen bağlantınızı kontrol edip tekrar deneyin",
+      "network": "Ağ hatası. Lütfen tekrar deneyin",
       "unauthorized": "Yetkisiz",
       "forbidden": "Erişim reddedildi",
       "emailService": "E-posta gönderimi sırasında bir hata oluştu",

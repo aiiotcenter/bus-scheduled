@@ -3,8 +3,10 @@
 // ======================================================================================
 
 import { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../services/apiClient';
+import { getApiErrorMessageKey } from '../services/apiError';
 import type { ScheduleResponseRow } from '../types/schedule';
 
 // ======================================================================================
@@ -19,6 +21,7 @@ type UseScheduleDataResult = {
 };
 
 export const useScheduleData = (endpoint: string, errorMessage: string): UseScheduleDataResult => {
+  const { t: tGlobal } = useTranslation('translation');
   const [schedules, setSchedules] = useState<ScheduleResponseRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,9 +34,12 @@ export const useScheduleData = (endpoint: string, errorMessage: string): UseSche
       const res = await apiClient.get(endpoint);
       const rows: ScheduleResponseRow[] = Array.isArray(res.data?.data) ? res.data.data : [];
       setSchedules(rows);
-    } catch {
-      setError(errorMessage);
+      
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKey(err);
+      setError(tGlobal(messageKey, { defaultValue: messageKey }));
       setSchedules([]);
+
     } finally {
       setLoading(false);
     }

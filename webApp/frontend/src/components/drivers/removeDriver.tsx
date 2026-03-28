@@ -1,9 +1,13 @@
+//======================================================================================
+//? Importing
+//======================================================================================
 import React, { useState } from 'react';
-import axios from 'axios';
+
 import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 interface RemoveDriverProps {
   driverId: string;
@@ -11,6 +15,12 @@ interface RemoveDriverProps {
   onClose: () => void;
   onSuccess: () => void;
 }
+
+
+
+//======================================================================================
+//? RemoveDriver
+//======================================================================================
 
 const RemoveDriver: React.FC<RemoveDriverProps> = ({ 
   driverId, 
@@ -36,18 +46,17 @@ const RemoveDriver: React.FC<RemoveDriverProps> = ({
 
       onSuccess();
       onClose();
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        const backendMessageKey = err.response?.data?.message as string | undefined;
-        setError(backendMessageKey ? tGlobal(backendMessageKey, { defaultValue: backendMessageKey }) : t('removeDialog.error'));
-      } else {
-        setError(t('removeDialog.error'));
-      }
+    //-----------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('removeDialog.error'));
+    //-----------------------------------------------
     } finally {
       setIsLoading(false);
     }
   };
 
+  //======================================================================================
   return (
     <div className="fixed inset-0 bg-black/80  flex items-center justify-center z-50">
       <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
@@ -86,5 +95,7 @@ const RemoveDriver: React.FC<RemoveDriverProps> = ({
     </div>
   );
 };
+
+//======================================================================================
 
 export default RemoveDriver;

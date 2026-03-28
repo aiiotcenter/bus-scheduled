@@ -6,6 +6,10 @@ module.exports = {
     testEnvironment: 'node',
     testMatch: ['<rootDir>/backend/**/*.test.ts'],
     modulePathIgnorePatterns: ['<rootDir>/frontend/', '<rootDir>/node_modules/'],
+    // path alias for import 
+    moduleNameMapper: {
+        '^@src/(.*)$': '<rootDir>/backend/src/$1',
+    },
     globals: {
         'ts-jest': {
             tsconfig: '<rootDir>/backend/tsconfig.json',

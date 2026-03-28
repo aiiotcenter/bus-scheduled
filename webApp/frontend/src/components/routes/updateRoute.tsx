@@ -2,12 +2,12 @@
 //? Importing
 //======================================================================================
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import { COLORS } from '../../styles/colorPalette';
 import { routeStatus } from '../../enums/statusEnums';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 interface RouteData {
   id: string;
@@ -68,8 +68,10 @@ const UpdateRoute: React.FC<UpdateRouteProps> = ({ onClose, onSuccess, routeId }
         setFormData(nextData);
         setInitialData(nextData);
       }
-    } catch (err) {
-      setError(t('updateForm.loadError'));
+    // -----------------------------------------------  
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.loadError'));
     }
   };
 
@@ -84,13 +86,10 @@ const UpdateRoute: React.FC<UpdateRouteProps> = ({ onClose, onSuccess, routeId }
       try {
         const response = await apiClient.get('/api/admin/stations/picker');
         setStations(response.data.data || response.data || []);
-      } catch (err: any) {
-        if (axios.isAxiosError(err)) {
-          const messageKey = err.response?.data?.message as string | undefined;
-          setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.stationsLoadError'));
-        } else {
-          setError(t('updateForm.stationsLoadError'));
-        }
+      // -----------------------------------------------
+      } catch (err: unknown) {
+        const messageKey = tryGetApiErrorMessageKey(err);
+        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.stationsLoadError'));
       }
     };
 
@@ -178,13 +177,9 @@ const UpdateRoute: React.FC<UpdateRouteProps> = ({ onClose, onSuccess, routeId }
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.error'));
-      } else {
-        setError(t('updateForm.error'));
-      }
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.error'));
     } finally {
       setLoading(false);
     }

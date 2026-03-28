@@ -1,0 +1,1 @@
+{"version":3,"file":"NetworkError.js","sourceRoot":"","sources":["../../src/errors/NetworkError.ts"],"names":[],"mappings":";AAAA,4FAA4F;AAC5F,+BAA+B;;;AAE/B,MAAa,YAAa,SAAQ,KAAK;IACrC;QACE,KAAK,CAAC,wBAAwB,CAAC,CAAC;QAChC,IAAI,CAAC,IAAI,GAAG,cAAc,CAAC;IAC7B,CAAC;CACF;AALD,oCAKC"}

@@ -3,7 +3,9 @@
 //====================================================================================================================================
 
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { apiClient } from '../services/apiClient';
+import { getApiErrorMessageKey } from '../services/apiError';
 
 interface UserData {
   userID: string;
@@ -19,6 +21,7 @@ interface UseAuthReturn {
 }
 
 export const useAuth = (): UseAuthReturn => {
+  const { t: tGlobal } = useTranslation('translation');
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -34,7 +37,9 @@ export const useAuth = (): UseAuthReturn => {
         //----------------------------------------------------------
       } catch (err) {
         setUser(null);
-        setError('Failed to fetch user data');
+        const messageKey = getApiErrorMessageKey(err);
+        setError(tGlobal(messageKey, { defaultValue: messageKey }));
+        
       } finally {
         setLoading(false);
       }

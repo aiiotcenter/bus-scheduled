@@ -5,6 +5,7 @@
 import { LocationData, userIPaddressAndLocation } from "../../interfaces/helper&middlewareInterface";
 
 import { RequestLike } from "./types";
+import { apiClient } from "../../services/apiClient";
 
 //==========================================================================================================
 
@@ -18,13 +19,13 @@ export const getIPaddressAndUserLocation = async (req: RequestLike): Promise<use
             return unknownResult;
         }
 
-        const response = await fetch(`http://ip-api.com/json/${ip}`);
+        const response = await apiClient.getJson<LocationData>(`http://ip-api.com/json/${ip}`);
 
         if (!response.ok) {
             console.warn("Failed to fetch location data, skipping location lookup");
             return { ip, location: null };
         }
-        const locationJSONdata = (await response.json()) as LocationData;
+        const locationJSONdata = response.data as LocationData | null;
         if (!locationJSONdata || Object.keys(locationJSONdata).length === 0) {
             console.warn("No location data found for the given IP address, skipping location lookup");
             return { ip, location: null };

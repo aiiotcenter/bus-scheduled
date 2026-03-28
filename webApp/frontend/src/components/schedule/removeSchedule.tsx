@@ -3,11 +3,11 @@
 //======================================================================================
 
 import React, { useState } from 'react';
-import axios from 'axios';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { getApiErrorMessageKeyOrUndefined } from '../../services/apiError';
 
 //======================================================================================
 //? Types
@@ -62,13 +62,11 @@ const RemoveSchedule: React.FC<RemoveScheduleProps> = ({
       onSuccess(tBusSchedule('success.removed'));
       onClose();
       await onRefresh();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('removeDialog.error'));
-      } else {
-        setError(tBusSchedule('removeDialog.error'));
-      }
+      // -----------------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = getApiErrorMessageKeyOrUndefined(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tBusSchedule('removeDialog.error'));
+    // -----------------------------------------------------------  
     } finally {
       setLoading(false);
     }
@@ -112,5 +110,7 @@ const RemoveSchedule: React.FC<RemoveScheduleProps> = ({
   );
 };
 
+
+//=================================================================================
 export default RemoveSchedule;
 

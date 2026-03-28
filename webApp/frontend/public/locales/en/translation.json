@@ -2,6 +2,8 @@
   "common": {
     "errors": {
       "internal": "Internal server error",
+      "offline": "No internet connection. Please check your connection and try again",
+      "network": "Network error. Please try again",
       "unauthorized": "Access Denied, unauthorized user",
       "forbidden": "Access denied, you are not authorized to perform this action",
       "emailService": "Error occured while sending Email",

@@ -2,13 +2,13 @@
 //? Importing
 //======================================================================================
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import { busStatus } from '../../enums/statusEnums';
 
 import { COLORS } from '../../styles/colorPalette';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 interface BusData{
     id: string,
@@ -112,13 +112,11 @@ const UpdateBus = ({ onClose, onSuccess, busId }: UpdateBusProps) => {
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      if (axios.isAxiosError(err)) {
-        const messageKey = err.response?.data?.message as string | undefined;
-        setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.error'));
-      } else {
-        setError(t('updateForm.error'));
-      }
+    //-----------------------------------------------
+    } catch (err: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(err);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : t('updateForm.error'));
+    //-----------------------------------------------
     } finally {
       setLoading(false);
     }

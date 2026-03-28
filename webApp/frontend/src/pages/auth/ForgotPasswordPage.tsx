@@ -4,7 +4,6 @@
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import loginPicture from '../../assets/loginPicture.png';
 import busTrackerLogo from '../../assets/busTrackerlogo.png';
 import { burgundy } from '../../styles/colorPalette';
@@ -12,12 +11,14 @@ import LanguageSwitcher from '../../components/common/LanguageSwitcher';
 import { useTranslation } from 'react-i18next';
 
 import { apiClient } from '../../services/apiClient';
+import { tryGetApiErrorMessageKey } from '../../services/apiError';
 
 
 // ===============================================================================================
 
 const ForgotPassword = () => {
   const { t } = useTranslation('auth/forgot-passwordPage');
+  const { t: tGlobal } = useTranslation('translation');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [EmailSent, setEmailSent] = useState(false);
@@ -45,20 +46,13 @@ const ForgotPassword = () => {
       console.log(response);
       console.log(response.data);
       
-      
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const backendMessageKey = error.response?.data?.message as string | undefined;
-        if (backendMessageKey) {
-          setError(t(backendMessageKey, { ns: 'translation' }));
-        } else {
-          setError(t('common.errors.internal', { ns: 'translation' }));
-        }
-      } else {
-        setError(t('common.errors.internal', { ns: 'translation' }));
-      }
+    // ---------------------------------------------      
+    } catch (error: unknown) {
+      const messageKey = tryGetApiErrorMessageKey(error);
+      setError(messageKey ? tGlobal(messageKey, { defaultValue: messageKey }) : tGlobal('common.errors.internal'));
 
       console.error('forgot password error:', error);
+    // ---------------------------------------------
     } finally {
       setLoading(false);
     }
