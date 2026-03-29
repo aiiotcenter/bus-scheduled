@@ -1,12 +1,17 @@
 "use strict";
+// ================================================================================
+// ? Import 
+// =====================================================================
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiClient = void 0;
 const NetworkError_1 = require("../errors/NetworkError");
+// =====================================================================
 async function requestJson(input, init) {
     const timeoutMs = init?.timeoutMs ?? 8000;
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), timeoutMs);
     try {
+        // Perform the HTTP request with a JSON Accept header, then attempt to parse the response body as JSON
         const res = await fetch(input, {
             ...init,
             signal: controller.signal,
@@ -15,6 +20,7 @@ async function requestJson(input, init) {
                 ...(init?.headers ?? {}),
             },
         });
+        // If the response body is not valid JSON (or is empty), we fall back to `null`( to keep the return type stable)
         let data = null;
         try {
             data = (await res.json());
@@ -23,15 +29,18 @@ async function requestJson(input, init) {
             data = null;
         }
         return { ok: res.ok, status: res.status, data };
+        // --------------------------------
     }
     catch (err) {
         void err;
         throw new NetworkError_1.NetworkError();
+        // --------------------------------
     }
     finally {
         clearTimeout(timeout);
     }
 }
+// =====================================================================
 exports.apiClient = {
     getJson: (url, init) => requestJson(url, { ...init, method: 'GET' }),
 };

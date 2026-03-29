@@ -133,53 +133,36 @@ export class StationService{
     //===================================================================================================
 
     async addStation(payload: Record<string, any>): Promise<{ messageKey: string }> {
-        try{
-            await helper.add(stationModel, payload, {
-
-                nonDuplicateFields: ['stationName'],
+        await helper.add(stationModel, payload, {
+            nonDuplicateFields: ['stationName'],
                 //----------------------------------------------------------------
-                transform: async(data) => {
-                    const out = {...data};
+            transform: async(data) => {
+                const out = {...data};
 
-                    if(out.stationName){
-                        out.stationName = String(data.stationName).toLowerCase().trim();
-                    }
+                if(out.stationName){
+                    out.stationName = String(data.stationName).toLowerCase().trim();
+                }
 
-					if (out.defaultType === undefined) {
-						out.defaultType = null;
-					}
-					out.isDefault = out.defaultType !== null;
-					if (out.isDefault === true) {
-						out.status = status.covered;
-					}
+                if (out.defaultType === undefined) {
+                    out.defaultType = null;
+                }
+                out.isDefault = out.defaultType !== null;
+                if (out.isDefault === true) {
+                    out.status = status.covered;
+                }
 
-                    return out;
-                    
-                },    
-              }
-            );
+                return out;
+                
+            },    
+          }
+        );
 
-			const providedDefaultType = payload?.defaultType;
-			if (providedDefaultType != null) {
-				await this.syncDefaultStationsToAllRoutes();
-			}
-
-            return { messageKey: "stations.success.added" };
-        
-        }catch(error){
-            console.error('Error occured while creating station.', error);
-
-            if (
-                error instanceof ValidationError ||
-                error instanceof ConflictError ||
-                error instanceof NotFoundError
-            ) {
-                throw error;
-            }
-
-            throw new InternalError('common.errors.internal');
+        const providedDefaultType = payload?.defaultType;
+        if (providedDefaultType != null) {
+            await this.syncDefaultStationsToAllRoutes();
         }
-        
+
+        return { messageKey: "stations.success.added" };
     }
 
     //===================================================================================================
@@ -259,79 +242,66 @@ export class StationService{
     //===================================================================================================
 
     async fetchAllStations(): Promise<{ messageKey: string; data: unknown }> {
-        try {
-            // get all covered stations
-            const coveredStationRows = await RouteStationModel.findAll({
-                attributes: ['stationId'],
-                group: ['stationId']
-            });
+        // get all covered stations
+        const coveredStationRows = await RouteStationModel.findAll({
+            attributes: ['stationId'],
+            group: ['stationId']
+        });
 
-            const coveredStationIds = coveredStationRows
-                .map((row: any) => String(row.stationId))
-                .filter((id) => id.trim().length > 0);
+        const coveredStationIds = coveredStationRows
+            .map((row: any) => String(row.stationId))
+            .filter((id) => id.trim().length > 0);
 
-            if (coveredStationIds.length > 0) {
-            
-                // update covered stations' status to "covered"
-                await stationModel.update(
-                    { status: status.covered },
-                    { where: { id: { [Op.in]: coveredStationIds } } }
-                );
+        if (coveredStationIds.length > 0) {
+        
+            // update covered stations' status to "covered"
+            await stationModel.update(
+                { status: status.covered },
+                { where: { id: { [Op.in]: coveredStationIds } } }
+            );
 
-                // update stations' status to "notCovered"
-                await stationModel.update(
-                    { status: status.notCovered },
-                    { where: { id: { [Op.notIn]: coveredStationIds } } }
-                );
-            } else {
-                await stationModel.update(
-                    { status: status.notCovered },
-                    { where: {} }
-                );
-            }
-
-			// default stations are always covered
-			await stationModel.update(
-				{ status: status.covered },
-				{ where: { defaultType: { [Op.not]: null } } }
-			);
-
-            const stations = await stationModel.findAll({
-                attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
-            });
-
-            return { messageKey: 'stations.success.fetched', data: stations };
-        // -----------------------------------------------------------------------------------
-        } catch (error) {
-            console.error('Error occured while fetching stations.', error);
-            throw new InternalError('common.errors.internal');
+            // update stations' status to "notCovered"
+            await stationModel.update(
+                { status: status.notCovered },
+                { where: { id: { [Op.notIn]: coveredStationIds } } }
+            );
+        } else {
+            await stationModel.update(
+                { status: status.notCovered },
+                { where: {} }
+            );
         }
+
+        // default stations are always covered
+        await stationModel.update(
+            { status: status.covered },
+            { where: { defaultType: { [Op.not]: null } } }
+        );
+
+        const stations = await stationModel.findAll({
+            attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
+        });
+
+        return { messageKey: 'stations.success.fetched', data: stations };
     }
 
     // =====================================================================================================
     //? Function to fetch default stations (fixed stations - stations that must exists in all routes)
     // ===================================================================================================== 
     async fetchDefaultStations(): Promise<{messageKey: string; data: unknown}> {
-        try {
-            const stations = await stationModel.findAll({
-                attributes: ['id'],
-				where: { defaultType: { [Op.not]: null } }
-            });
-            
-            const defaultStations = Array.from(stations);
+        const stations = await stationModel.findAll({
+            attributes: ['id'],
+            where: { defaultType: { [Op.not]: null } }
+        });
+        
+        const defaultStations = Array.from(stations);
 
-            // return string array of default stations' ids
-            const fixedStationIds = defaultStations
-				.map((station: stationListObjects) => String(station?.id))
-				.filter((id: string) => id.trim().length > 0);
+        // return string array of default stations' ids
+        const fixedStationIds = defaultStations
+            .map((station: stationListObjects) => String(station?.id))
+            .filter((id: string) => id.trim().length > 0);
 
-
-            return { messageKey: 'stations.success.fetched', data: fixedStationIds };
-        // -----------------------------------------------------------------------------------
-        } catch (error) {
-            console.error('Error occured while fetching Default Stations', error);
-            throw new InternalError('common.errors.internal');
-        }
+        return { messageKey: 'stations.success.fetched', data: fixedStationIds };
     }
 
 
@@ -340,63 +310,41 @@ export class StationService{
     //? function to Fetch Stations for Route Picker (exclude fixed/default stations)
     //===================================================================================================
     async fetchStationsForPicker(): Promise<{ messageKey: string; data: unknown }> {
-        try {
+        const defaultStationsResult = await this.fetchDefaultStations();
+        const defaultStations: string[]= defaultStationsResult.data as string[];
 
-			const defaultStationsResult = await this.fetchDefaultStations();
-            const defaultStations: string[]= defaultStationsResult.data as string[];
+        // -----------------------------------------------------------------
+        const stations = await stationModel.findAll({
+            attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
+        });
 
+        const filteredStations = (stations as stationAttributes[]).filter(
+            (station) => {
+                const id:string = String((station as stationAttributes)?.id);
+                const dt = (station as stationAttributes)?.defaultType;
+                const isDefaultByType:boolean = dt != null;
+                
+                return !isDefaultByType && !defaultStations.includes(id);
+            }
+        );
 
-            // -----------------------------------------------------------------
-            const stations = await stationModel.findAll({
-				attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
-            });
-
-            const filteredStations = (stations as stationAttributes[]).filter(
-				(station) => {
-					const id:string = String((station as stationAttributes)?.id);
-					const dt = (station as stationAttributes)?.defaultType;
-					const isDefaultByType:boolean = dt != null;
-					
-					return !isDefaultByType && !defaultStations.includes(id);
-				}
-            );
-
-            return { messageKey: 'stations.success.fetched', data: filteredStations };
-        // -----------------------------------------------------------------------------------
-        } catch (error) {
-            console.error('Error occured while fetching stations for picker.', error);
-            throw new InternalError('common.errors.internal');
-        }
+        return { messageKey: 'stations.success.fetched', data: filteredStations };
     }
 
 	// ==================================================================================
     //? function to Fetch Default START Stations
     // ==================================================================================
     async fetchDefaultStartStations(): Promise<{ messageKey: string; data: unknown }> {
-		try {
-			const ids = await this.fetchDefaultStationIdsByType(defaultType.start);
-			return { messageKey: 'stations.success.fetched', data: ids };
-
-		// -----------------------------------------------------------------------------------
-        } catch (error) {
-			console.error('Error occured while fetching Default Start Stations', error);
-			throw new InternalError('common.errors.internal');
-		}
+        const ids = await this.fetchDefaultStationIdsByType(defaultType.start);
+        return { messageKey: 'stations.success.fetched', data: ids };
 	}
 
 	// ==================================================================================
     //? function to Fetch Default END Stations
     // ==================================================================================
 	async fetchDefaultEndStations(): Promise<{ messageKey: string; data: unknown }> {
-		try {
-			const ids = await this.fetchDefaultStationIdsByType(defaultType.end);
-			return { messageKey: 'stations.success.fetched', data: ids };
-
-		// -----------------------------------------------------------------------------------
-        } catch (error) {
-			console.error('Error occured while fetching Default End Stations', error);
-			throw new InternalError('common.errors.internal');
-		}
+        const ids = await this.fetchDefaultStationIdsByType(defaultType.end);
+        return { messageKey: 'stations.success.fetched', data: ids };
 	}
 
 }

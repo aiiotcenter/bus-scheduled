@@ -102,7 +102,7 @@
  
      // ============================================================================================================
      //? Add bus
-     // ======= =====================================================================================================
+     // ============================================================================================================
  
      describe("addBus", () => {
          test("should add bus successfully", async () => {
@@ -156,12 +156,12 @@
 
         test("should throw error when an unexpected error occurs", async () => {
             const UserHelperModule = require("../src/helpers/userHelper");
-            UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(new Error("DB error"));
+            UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(new Error("error"));
 
             const payload = { plate: "1234", brand: "Test", status: status.operating };
             const promise = busService.addBus(payload);
 
-            await expect(promise).rejects.toThrow("DB error");
+            await expect(promise).rejects.toThrow("error");
             expect(UserHelperModule.mockUserHelperInstance.add).toHaveBeenCalledTimes(1);
         });
      });
@@ -205,11 +205,11 @@
 
         test("should throw error when an unexpected error occurs", async () => {
             const UserHelperModule = require("../src/helpers/userHelper");
-            UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("DB error"));
+            UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("error"));
 
             const promise = busService.removeBus("D123");
 
-            await expect(promise).rejects.toThrow("DB error");
+            await expect(promise).rejects.toThrow("error");
             expect(UserHelperModule.mockUserHelperInstance.remove).toHaveBeenCalledTimes(1);
         });
      });
@@ -244,11 +244,11 @@
 
         test("should throw error when an unexpected error occurs", async () => {
             const UserHelperModule = require("../src/helpers/userHelper");
-            UserHelperModule.mockUserHelperInstance.update.mockRejectedValueOnce(new Error("DB error"));
+            UserHelperModule.mockUserHelperInstance.update.mockRejectedValueOnce(new Error("error"));
 
             const promise = busService.updateBus({ id: "B123", plate: "1234" });
 
-            await expect(promise).rejects.toThrow("DB error");
+            await expect(promise).rejects.toThrow("error");
             expect(UserHelperModule.mockUserHelperInstance.update).toHaveBeenCalledTimes(1);
         });
 
@@ -295,7 +295,7 @@
          // --------------------------------------------------------------------
  
          test("should throw InternalError when viewing buses fails", async () => {
-             (BusModel.findAll as jest.Mock).mockRejectedValueOnce(new Error("DB error"));
+             (BusModel.findAll as jest.Mock).mockRejectedValueOnce(new Error("error"));
  
              const promise = busService.viewBuses(true);
  
@@ -306,7 +306,7 @@
          // --------------------------------------------------------------------
 
         test("should throw InternalError when an unexpected error occurs", async () => {
-            (BusModel.findAll as jest.Mock).mockRejectedValueOnce(new Error("DB error"));
+            (BusModel.findAll as jest.Mock).mockRejectedValueOnce(new Error("error"));
 
             const promise = busService.viewBuses(false);
 

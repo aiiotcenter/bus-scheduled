@@ -15,7 +15,6 @@ const sequelize_1 = require("sequelize");
 const database_1 = require("../config/database");
 //import Enums
 const stationEnum_1 = require("../enums/stationEnum");
-const errors_1 = require("../errors");
 // import helpers
 const routeHelper_1 = require("../helpers/routeHelper");
 // import helpers
@@ -101,40 +100,29 @@ class StationService {
     //? function to Add Station
     //===================================================================================================
     async addStation(payload) {
-        try {
-            await helper.add(stationModel_1.default, payload, {
-                nonDuplicateFields: ['stationName'],
-                //----------------------------------------------------------------
-                transform: async (data) => {
-                    const out = { ...data };
-                    if (out.stationName) {
-                        out.stationName = String(data.stationName).toLowerCase().trim();
-                    }
-                    if (out.defaultType === undefined) {
-                        out.defaultType = null;
-                    }
-                    out.isDefault = out.defaultType !== null;
-                    if (out.isDefault === true) {
-                        out.status = stationEnum_1.status.covered;
-                    }
-                    return out;
-                },
-            });
-            const providedDefaultType = payload?.defaultType;
-            if (providedDefaultType != null) {
-                await this.syncDefaultStationsToAllRoutes();
-            }
-            return { messageKey: "stations.success.added" };
+        await helper.add(stationModel_1.default, payload, {
+            nonDuplicateFields: ['stationName'],
+            //----------------------------------------------------------------
+            transform: async (data) => {
+                const out = { ...data };
+                if (out.stationName) {
+                    out.stationName = String(data.stationName).toLowerCase().trim();
+                }
+                if (out.defaultType === undefined) {
+                    out.defaultType = null;
+                }
+                out.isDefault = out.defaultType !== null;
+                if (out.isDefault === true) {
+                    out.status = stationEnum_1.status.covered;
+                }
+                return out;
+            },
+        });
+        const providedDefaultType = payload?.defaultType;
+        if (providedDefaultType != null) {
+            await this.syncDefaultStationsToAllRoutes();
         }
-        catch (error) {
-            console.error('Error occured while creating station.', error);
-            if (error instanceof errors_1.ValidationError ||
-                error instanceof errors_1.ConflictError ||
-                error instanceof errors_1.NotFoundError) {
-                throw error;
-            }
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        return { messageKey: "stations.success.added" };
     }
     //===================================================================================================
     //? function to Remove Station
@@ -195,111 +183,76 @@ class StationService {
     //? function to Fetch All Stations
     //===================================================================================================
     async fetchAllStations() {
-        try {
-            // get all covered stations
-            const coveredStationRows = await routeStationModel_1.default.findAll({
-                attributes: ['stationId'],
-                group: ['stationId']
-            });
-            const coveredStationIds = coveredStationRows
-                .map((row) => String(row.stationId))
-                .filter((id) => id.trim().length > 0);
-            if (coveredStationIds.length > 0) {
-                // update covered stations' status to "covered"
-                await stationModel_1.default.update({ status: stationEnum_1.status.covered }, { where: { id: { [sequelize_1.Op.in]: coveredStationIds } } });
-                // update stations' status to "notCovered"
-                await stationModel_1.default.update({ status: stationEnum_1.status.notCovered }, { where: { id: { [sequelize_1.Op.notIn]: coveredStationIds } } });
-            }
-            else {
-                await stationModel_1.default.update({ status: stationEnum_1.status.notCovered }, { where: {} });
-            }
-            // default stations are always covered
-            await stationModel_1.default.update({ status: stationEnum_1.status.covered }, { where: { defaultType: { [sequelize_1.Op.not]: null } } });
-            const stations = await stationModel_1.default.findAll({
-                attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
-            });
-            return { messageKey: 'stations.success.fetched', data: stations };
-            // -----------------------------------------------------------------------------------
+        // get all covered stations
+        const coveredStationRows = await routeStationModel_1.default.findAll({
+            attributes: ['stationId'],
+            group: ['stationId']
+        });
+        const coveredStationIds = coveredStationRows
+            .map((row) => String(row.stationId))
+            .filter((id) => id.trim().length > 0);
+        if (coveredStationIds.length > 0) {
+            // update covered stations' status to "covered"
+            await stationModel_1.default.update({ status: stationEnum_1.status.covered }, { where: { id: { [sequelize_1.Op.in]: coveredStationIds } } });
+            // update stations' status to "notCovered"
+            await stationModel_1.default.update({ status: stationEnum_1.status.notCovered }, { where: { id: { [sequelize_1.Op.notIn]: coveredStationIds } } });
         }
-        catch (error) {
-            console.error('Error occured while fetching stations.', error);
-            throw new errors_1.InternalError('common.errors.internal');
+        else {
+            await stationModel_1.default.update({ status: stationEnum_1.status.notCovered }, { where: {} });
         }
+        // default stations are always covered
+        await stationModel_1.default.update({ status: stationEnum_1.status.covered }, { where: { defaultType: { [sequelize_1.Op.not]: null } } });
+        const stations = await stationModel_1.default.findAll({
+            attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
+        });
+        return { messageKey: 'stations.success.fetched', data: stations };
     }
     // =====================================================================================================
     //? Function to fetch default stations (fixed stations - stations that must exists in all routes)
     // ===================================================================================================== 
     async fetchDefaultStations() {
-        try {
-            const stations = await stationModel_1.default.findAll({
-                attributes: ['id'],
-                where: { defaultType: { [sequelize_1.Op.not]: null } }
-            });
-            const defaultStations = Array.from(stations);
-            // return string array of default stations' ids
-            const fixedStationIds = defaultStations
-                .map((station) => String(station?.id))
-                .filter((id) => id.trim().length > 0);
-            return { messageKey: 'stations.success.fetched', data: fixedStationIds };
-            // -----------------------------------------------------------------------------------
-        }
-        catch (error) {
-            console.error('Error occured while fetching Default Stations', error);
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        const stations = await stationModel_1.default.findAll({
+            attributes: ['id'],
+            where: { defaultType: { [sequelize_1.Op.not]: null } }
+        });
+        const defaultStations = Array.from(stations);
+        // return string array of default stations' ids
+        const fixedStationIds = defaultStations
+            .map((station) => String(station?.id))
+            .filter((id) => id.trim().length > 0);
+        return { messageKey: 'stations.success.fetched', data: fixedStationIds };
     }
     //===================================================================================================
     //? function to Fetch Stations for Route Picker (exclude fixed/default stations)
     //===================================================================================================
     async fetchStationsForPicker() {
-        try {
-            const defaultStationsResult = await this.fetchDefaultStations();
-            const defaultStations = defaultStationsResult.data;
-            // -----------------------------------------------------------------
-            const stations = await stationModel_1.default.findAll({
-                attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
-            });
-            const filteredStations = stations.filter((station) => {
-                const id = String(station?.id);
-                const dt = station?.defaultType;
-                const isDefaultByType = dt != null;
-                return !isDefaultByType && !defaultStations.includes(id);
-            });
-            return { messageKey: 'stations.success.fetched', data: filteredStations };
-            // -----------------------------------------------------------------------------------
-        }
-        catch (error) {
-            console.error('Error occured while fetching stations for picker.', error);
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        const defaultStationsResult = await this.fetchDefaultStations();
+        const defaultStations = defaultStationsResult.data;
+        // -----------------------------------------------------------------
+        const stations = await stationModel_1.default.findAll({
+            attributes: ['id', 'stationName', 'status', 'latitude', 'longitude', 'isDefault', 'defaultType']
+        });
+        const filteredStations = stations.filter((station) => {
+            const id = String(station?.id);
+            const dt = station?.defaultType;
+            const isDefaultByType = dt != null;
+            return !isDefaultByType && !defaultStations.includes(id);
+        });
+        return { messageKey: 'stations.success.fetched', data: filteredStations };
     }
     // ==================================================================================
     //? function to Fetch Default START Stations
     // ==================================================================================
     async fetchDefaultStartStations() {
-        try {
-            const ids = await this.fetchDefaultStationIdsByType(stationEnum_1.defaultType.start);
-            return { messageKey: 'stations.success.fetched', data: ids };
-            // -----------------------------------------------------------------------------------
-        }
-        catch (error) {
-            console.error('Error occured while fetching Default Start Stations', error);
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        const ids = await this.fetchDefaultStationIdsByType(stationEnum_1.defaultType.start);
+        return { messageKey: 'stations.success.fetched', data: ids };
     }
     // ==================================================================================
     //? function to Fetch Default END Stations
     // ==================================================================================
     async fetchDefaultEndStations() {
-        try {
-            const ids = await this.fetchDefaultStationIdsByType(stationEnum_1.defaultType.end);
-            return { messageKey: 'stations.success.fetched', data: ids };
-            // -----------------------------------------------------------------------------------
-        }
-        catch (error) {
-            console.error('Error occured while fetching Default End Stations', error);
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        const ids = await this.fetchDefaultStationIdsByType(stationEnum_1.defaultType.end);
+        return { messageKey: 'stations.success.fetched', data: ids };
     }
 }
 exports.StationService = StationService;
