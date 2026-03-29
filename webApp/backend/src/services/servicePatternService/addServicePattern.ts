@@ -54,7 +54,6 @@ export const addServicePattern = async (
         throw new ValidationError("servicePatterns.validation.invalidHours");
     }
 
-    try {
         const created = await sequelize.transaction(async (t) => {
             let servicePatternId: string;
             do {
@@ -106,8 +105,4 @@ export const addServicePattern = async (
         });
 
         return { messageKey: "servicePatterns.success.added", data: created };
-    } catch (error) {
-        console.error("Error occured while creating service pattern.", error);
-        throw new InternalError("common.errors.internal");
-    }
 };

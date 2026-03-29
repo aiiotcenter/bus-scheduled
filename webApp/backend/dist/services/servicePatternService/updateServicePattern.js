@@ -35,52 +35,46 @@ const updateServicePattern = async (payload) => {
     if (hours.length === 0) {
         throw new errors_1.ValidationError("servicePatterns.validation.invalidHours");
     }
-    try {
-        const updated = await database_1.sequelize.transaction(async (t) => {
-            const pattern = await servicePatternModel_1.default.findOne({ where: { servicePatternId }, transaction: t });
-            if (!pattern) {
-                return null;
-            }
-            await servicePatternModel_1.default.update({ title }, {
-                where: { servicePatternId },
-                transaction: t,
-            });
-            await operatingHoursModel_1.default.destroy({
-                where: { servicePatternId },
-                transaction: t,
-            });
-            const createdOperatingHours = [];
-            for (const h of hours) {
-                let operatingHourId;
-                do {
-                    const id = Math.floor(100 + Math.random() * 900);
-                    operatingHourId = `O${id}`;
-                } while ((await operatingHoursModel_1.default.count({ where: { operatingHourId }, transaction: t })) !== 0);
-                const minute = h === 6 ? constants_1.startOperatingMinuteLabel : constants_1.operatingMinuteLabel;
-                const hour = `${String(h).padStart(2, "0")}:${minute}:00`;
-                await operatingHoursModel_1.default.create({
-                    operatingHourId,
-                    servicePatternId,
-                    hour,
-                }, { transaction: t });
-                createdOperatingHours.push({ operatingHourId, hour });
-            }
-            const out = {
-                servicePatternId,
-                title,
-                operatingHours: createdOperatingHours,
-            };
-            return out;
-        });
-        if (!updated) {
-            throw new errors_1.NotFoundError("servicePatterns.errors.notFound");
+    const updated = await database_1.sequelize.transaction(async (t) => {
+        const pattern = await servicePatternModel_1.default.findOne({ where: { servicePatternId }, transaction: t });
+        if (!pattern) {
+            return null;
         }
-        return { messageKey: "servicePatterns.success.updated", data: updated };
+        await servicePatternModel_1.default.update({ title }, {
+            where: { servicePatternId },
+            transaction: t,
+        });
+        await operatingHoursModel_1.default.destroy({
+            where: { servicePatternId },
+            transaction: t,
+        });
+        const createdOperatingHours = [];
+        for (const h of hours) {
+            let operatingHourId;
+            do {
+                const id = Math.floor(100 + Math.random() * 900);
+                operatingHourId = `O${id}`;
+            } while ((await operatingHoursModel_1.default.count({ where: { operatingHourId }, transaction: t })) !== 0);
+            const minute = h === 6 ? constants_1.startOperatingMinuteLabel : constants_1.operatingMinuteLabel;
+            const hour = `${String(h).padStart(2, "0")}:${minute}:00`;
+            await operatingHoursModel_1.default.create({
+                operatingHourId,
+                servicePatternId,
+                hour,
+            }, { transaction: t });
+            createdOperatingHours.push({ operatingHourId, hour });
+        }
+        const out = {
+            servicePatternId,
+            title,
+            operatingHours: createdOperatingHours,
+        };
+        return out;
+    });
+    if (!updated) {
+        throw new errors_1.NotFoundError("servicePatterns.errors.notFound");
     }
-    catch (error) {
-        console.error("Error occured while updating service pattern.", error);
-        throw error;
-    }
+    return { messageKey: "servicePatterns.success.updated", data: updated };
 };
 exports.updateServicePattern = updateServicePattern;
 //# sourceMappingURL=updateServicePattern.js.map

@@ -58,7 +58,6 @@ export const updateServicePattern = async (
         throw new ValidationError("servicePatterns.validation.invalidHours");
     }
 
-    try {
         const updated = await sequelize.transaction(async (t) => {
             const pattern = await ServicePatternModel.findOne({ where: { servicePatternId }, transaction: t });
             if (!pattern) {
@@ -115,8 +114,4 @@ export const updateServicePattern = async (
         }
 
         return { messageKey: "servicePatterns.success.updated", data: updated };
-    } catch (error) {
-        console.error("Error occured while updating service pattern.", error);
-        throw error;
-    }
 };

@@ -74,7 +74,7 @@ export class DriverService{
             if (error instanceof NotFoundError) {
                 throw error;
             }
-            throw new InternalError('common.errors.internal');
+            throw error;
         }
     }
 
@@ -118,7 +118,6 @@ export class DriverService{
     //===================================================================================================
 
     async fetchDrivers(displayAll: boolean, driverId?: unknown): Promise<{ messageKey: string; data: unknown}> {
-        try {
             const id = typeof driverId === 'string' ? driverId.trim() : '';
 
             let drivers; 
@@ -147,11 +146,6 @@ export class DriverService{
             
 
             return { messageKey: 'drivers.success.fetched', data: drivers };
-        
-        // --------------------------------------------------------------------------
-        } catch (error) {
-            throw new InternalError('common.errors.internal');
-        }
     }
 
     //===================================================================================================
@@ -159,7 +153,6 @@ export class DriverService{
     //===================================================================================================
 
     async fetchDriverProfile(driverId: unknown): Promise<{ messageKey: string; data: unknown }> {
-        try {
             const id = String(driverId ?? '').trim();
             if (!id) {
                 throw new ValidationError('common.errors.validation.required');
@@ -175,16 +168,6 @@ export class DriverService{
             }
 
             return { messageKey: 'drivers.success.fetched', data: driver };
-        // ----------------------------------------------------------------------------
-        } catch (error) {
-            if (error instanceof ValidationError) {
-                throw error;
-            }
-            if (error instanceof NotFoundError) {
-                throw error;
-            }
-            throw new InternalError('common.errors.internal');
-        }
     }
 
     //===================================================================================================
@@ -192,102 +175,93 @@ export class DriverService{
     //===================================================================================================
 
     async fetchDriverSchedule(driverId: unknown): Promise<{ messageKey: string; data: unknown }> {
-        try {
-            const id = String(driverId ?? '').trim();
-            if (!id) {
-                throw new ValidationError('common.errors.validation.required');
-            }
+        const id = String(driverId ?? '').trim();
+        if (!id) {
+            throw new ValidationError('common.errors.validation.required');
+        }
 
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0] ?? '';
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0] ?? '';
 
-            const trips = await ScheduledTripsModel.findAll({
-                where: { driverId: id },
-                attributes: ["detailedScheduleId", "scheduleId", "time", "routeId", "driverId", "busId"],
-                include: [
-                    {
-                        model: ScheduleModel,
-                        as: "schedule",
-                        attributes: ["scheduleId", "date", "day"],
-                        where: {
-                            date: { [Op.gte]: todayStr },
-                        },
-                        required: true,
-                    },
-                    {
-                        model: RouteModel,
-                        as: "route",
-                        attributes: ["id", "title", "color"],
-                    },
-                    {
-                        model: BusModel,
-                        as: "bus",
-                        attributes: ["id", "plate"],
-                    },
-                ],
-                // 
-                order: [
-                    [{ model: ScheduleModel, as: "schedule" }, "date", "ASC"],
-                    ["time", "ASC"],
-                ],
-            });
-
-            const byDay = new Map<
-                string,
+        const trips = await ScheduledTripsModel.findAll({
+            where: { driverId: id },
+            attributes: ["detailedScheduleId", "scheduleId", "time", "routeId", "driverId", "busId"],
+            include: [
                 {
-                    date: string;
-                    day: string;
-                    driverId: string;
-                    scheduleDetails: Array<{ time: string; routeName: string; routeColor: string; routeColorInt: number; busId: string; busPlate: string }>;
-                }
-            >();
+                    model: ScheduleModel,
+                    as: "schedule",
+                    attributes: ["scheduleId", "date", "day"],
+                    where: {
+                        date: { [Op.gte]: todayStr },
+                    },
+                    required: true,
+                },
+                {
+                    model: RouteModel,
+                    as: "route",
+                    attributes: ["id", "title", "color"],
+                },
+                {
+                    model: BusModel,
+                    as: "bus",
+                    attributes: ["id", "plate"],
+                },
+            ],
+            // 
+            order: [
+                [{ model: ScheduleModel, as: "schedule" }, "date", "ASC"],
+                ["time", "ASC"],
+            ],
+        });
 
-            for (const row of trips as any[]) {
-                const scheduleDate = row?.schedule?.date;
+        const byDay = new Map<
+            string,
+            {
+                date: string;
+                day: string;
+                driverId: string;
+                scheduleDetails: Array<{ time: string; routeName: string; routeColor: string; routeColorInt: number; busId: string; busPlate: string }>;
+            }
+        >();
 
-                const dateStr = scheduleHelper.formatDateForMobileUi(scheduleDate);
-                const dayStr = typeof row?.schedule?.day === 'string' ? row.schedule.day.trim() : '';
-                
-                const key = `${dateStr}|${dayStr}`;
+        for (const row of trips as any[]) {
+            const scheduleDate = row?.schedule?.date;
 
-                if (!byDay.has(key)) {
-                    byDay.set(key, {
-                        date: dateStr,
-                        day: dayStr,
-                        driverId: id,
-                        scheduleDetails: [],
-                    });
-                }
+            const dateStr = scheduleHelper.formatDateForMobileUi(scheduleDate);
+            const dayStr = typeof row?.schedule?.day === 'string' ? row.schedule.day.trim() : '';
+            
+            const key = `${dateStr}|${dayStr}`;
 
-                const time = scheduleHelper.normalizeTimeToHourMinute(row?.time);
-                
-                const routeName = typeof row?.route?.title === 'string' ? row.route.title.trim() : '';
-                const busIdStr = typeof row?.bus?.id === 'string' ? row.bus.id.trim() : '';
-                const busPlate = typeof row?.bus?.plate === 'string' ? row.bus.plate.trim() : '';
-                const routeColor = typeof row?.route?.color === 'string' ? row.route.color.trim() : '';
-                const routeColorInt = normalizeColorToArgbInt(row?.route?.color);
-
-                byDay.get(key)!.scheduleDetails.push({
-                    time,
-                    routeName,
-                    routeColor,
-                    routeColorInt,
-                    busId: busIdStr,
-                    busPlate,
+            if (!byDay.has(key)) {
+                byDay.set(key, {
+                    date: dateStr,
+                    day: dayStr,
+                    driverId: id,
+                    scheduleDetails: [],
                 });
             }
 
-            return {
-                messageKey: 'drivers.success.fetched',
-                data: Array.from(byDay.values()),
-            };
+            const time = scheduleHelper.normalizeTimeToHourMinute(row?.time);
+            
+            const routeName = typeof row?.route?.title === 'string' ? row.route.title.trim() : '';
+            const busIdStr = typeof row?.bus?.id === 'string' ? row.bus.id.trim() : '';
+            const busPlate = typeof row?.bus?.plate === 'string' ? row.bus.plate.trim() : '';
+            const routeColor = typeof row?.route?.color === 'string' ? row.route.color.trim() : '';
+            const routeColorInt = normalizeColorToArgbInt(row?.route?.color);
 
-        // ---------------------------------------------------------------------------------
-        } catch (error) {
-            if (error instanceof ValidationError) {
-                throw error;
-            }
-            throw new InternalError('common.errors.internal');
+            byDay.get(key)!.scheduleDetails.push({
+                time,
+                routeName,
+                routeColor,
+                routeColorInt,
+                busId: busIdStr,
+                busPlate,
+            });
         }
+
+        return {
+            messageKey: 'drivers.success.fetched',
+            data: Array.from(byDay.values()),
+        };
     }
 }

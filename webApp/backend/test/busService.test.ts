@@ -299,7 +299,7 @@
  
              const promise = busService.viewBuses(true);
  
-             await expect(promise).rejects.toBeInstanceOf(InternalError);
+             await expect(promise).rejects.toThrow("error");
              await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
          });
 
@@ -310,7 +310,7 @@
 
             const promise = busService.viewBuses(false);
 
-            await expect(promise).rejects.toBeInstanceOf(InternalError);
+            await expect(promise).rejects.toThrow("error");
             await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
             expect(BusModel.findAll).toHaveBeenCalledTimes(1);
         });

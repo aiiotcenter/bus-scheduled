@@ -20,7 +20,6 @@ export const deleteServicePattern = async (servicePatternIdRaw: unknown): Promis
         throw new ValidationError("servicePatterns.validation.idRequired");
     }
 
-    try {
         const deleted = await sequelize.transaction(async (t) => {
             const pattern = await ServicePatternModel.findOne({
                 where: { servicePatternId },
@@ -70,8 +69,4 @@ export const deleteServicePattern = async (servicePatternIdRaw: unknown): Promis
         }
 
         return { messageKey: "servicePatterns.success.deleted" };
-    } catch (error) {
-        console.error("Error occured while deleting service pattern.", error);
-        throw new InternalError("common.errors.internal");
-    }
 };

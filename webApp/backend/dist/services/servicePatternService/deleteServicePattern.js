@@ -13,59 +13,52 @@ const scheduleModel_1 = __importDefault(require("../../models/scheduleModel"));
 const scheduledTripsModel_1 = __importDefault(require("../../models/scheduledTripsModel"));
 const database_1 = require("../../config/database");
 const errors_1 = require("../../errors");
-const InternalError_1 = require("../../errors/InternalError");
 //======================================================================================================================
 const deleteServicePattern = async (servicePatternIdRaw) => {
     const servicePatternId = typeof servicePatternIdRaw === "string" ? servicePatternIdRaw.trim() : "";
     if (!servicePatternId) {
         throw new errors_1.ValidationError("servicePatterns.validation.idRequired");
     }
-    try {
-        const deleted = await database_1.sequelize.transaction(async (t) => {
-            const pattern = await servicePatternModel_1.default.findOne({
-                where: { servicePatternId },
-                transaction: t,
-            });
-            if (!pattern) {
-                return false;
-            }
-            // delete all scheduled trips with this schedule
-            const schedules = await scheduleModel_1.default.findAll({
-                where: { servicePatternId },
-                attributes: ["scheduleId"],
-                transaction: t,
-            });
-            const scheduleIds = schedules.map((s) => s.scheduleId).filter(Boolean);
-            if (scheduleIds.length > 0) {
-                await scheduledTripsModel_1.default.destroy({
-                    where: { scheduleId: scheduleIds },
-                    transaction: t,
-                });
-            }
-            await scheduleModel_1.default.destroy({
-                where: { servicePatternId },
-                transaction: t,
-            });
-            // delete all operating hours with this service pattern
-            await operatingHoursModel_1.default.destroy({
-                where: { servicePatternId },
-                transaction: t,
-            });
-            await servicePatternModel_1.default.destroy({
-                where: { servicePatternId },
-                transaction: t,
-            });
-            return true;
+    const deleted = await database_1.sequelize.transaction(async (t) => {
+        const pattern = await servicePatternModel_1.default.findOne({
+            where: { servicePatternId },
+            transaction: t,
         });
-        if (!deleted) {
-            throw new errors_1.NotFoundError("servicePatterns.errors.notFound");
+        if (!pattern) {
+            return false;
         }
-        return { messageKey: "servicePatterns.success.deleted" };
+        // delete all scheduled trips with this schedule
+        const schedules = await scheduleModel_1.default.findAll({
+            where: { servicePatternId },
+            attributes: ["scheduleId"],
+            transaction: t,
+        });
+        const scheduleIds = schedules.map((s) => s.scheduleId).filter(Boolean);
+        if (scheduleIds.length > 0) {
+            await scheduledTripsModel_1.default.destroy({
+                where: { scheduleId: scheduleIds },
+                transaction: t,
+            });
+        }
+        await scheduleModel_1.default.destroy({
+            where: { servicePatternId },
+            transaction: t,
+        });
+        // delete all operating hours with this service pattern
+        await operatingHoursModel_1.default.destroy({
+            where: { servicePatternId },
+            transaction: t,
+        });
+        await servicePatternModel_1.default.destroy({
+            where: { servicePatternId },
+            transaction: t,
+        });
+        return true;
+    });
+    if (!deleted) {
+        throw new errors_1.NotFoundError("servicePatterns.errors.notFound");
     }
-    catch (error) {
-        console.error("Error occured while deleting service pattern.", error);
-        throw new InternalError_1.InternalError("common.errors.internal");
-    }
+    return { messageKey: "servicePatterns.success.deleted" };
 };
 exports.deleteServicePattern = deleteServicePattern;
 //# sourceMappingURL=deleteServicePattern.js.map

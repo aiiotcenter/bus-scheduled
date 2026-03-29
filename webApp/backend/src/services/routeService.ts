@@ -52,150 +52,123 @@ export class RouteService{
             totalStops: finalStations.length
         };
 
-        try {
-            await helper.add(RouteModel, finalPayload,
-                {
-                    //-----------------------------------------------------------
-                    transform: async (data) => {
-                        const out = {...data};
-                        if(out.title){
-                            out.title  = out.title.toLowerCase().trim();
-                        }
-                        // remove non-column field
-                        delete out.stations;
-                        return out;
-                    },
-                    //-----------------------------------------------------------
-                    nonDuplicateFields: ['title'],
-                    //-----------------------------------------------------------
-                    enumFields: [
-                        { field: "status", enumObj: status },
-                    ],
-                    //-----------------------------------------------------------
-                }
-            );
-
-            // attach stations to route_stations table if provided
-            if(finalStations.length > 0 && finalPayload.title){
-                const createdRoute = await RouteModel.findOne({
-                    where: { title: String(finalPayload.title).toLowerCase().trim() },
-                    attributes: ['id']
-                });
-
-                if(createdRoute){
-                    const rows = finalStations.map((stationId, idx) => ({
-                        routeId: createdRoute.id,
-                        stationId,
-                        orderIndex: idx
-                    }));
-                    await RouteStationModel.bulkCreate(rows);
-                }
+        await helper.add(RouteModel, finalPayload,
+            {
+                //-----------------------------------------------------------
+                transform: async (data) => {
+                    const out = {...data};
+                    if(out.title){
+                        out.title  = out.title.toLowerCase().trim();
+                    }
+                    // remove non-column field
+                    delete out.stations;
+                    return out;
+                },
+                //-----------------------------------------------------------
+                nonDuplicateFields: ['title'],
+                //-----------------------------------------------------------
+                enumFields: [
+                    { field: "status", enumObj: status },
+                ],
+                //-----------------------------------------------------------
             }
+        );
 
-            return { messageKey: 'routes.success.added' };
+        // attach stations to route_stations table if provided
+        if(finalStations.length > 0 && finalPayload.title){
+            const createdRoute = await RouteModel.findOne({
+                where: { title: String(finalPayload.title).toLowerCase().trim() },
+                attributes: ['id']
+            });
 
-        } catch (error) {
-            console.error('Error occured while creating route.', error);
-            if (
-                error instanceof ValidationError ||
-                error instanceof ConflictError ||
-                error instanceof NotFoundError
-            ) {
-                throw error;
+            if(createdRoute){
+                const rows = finalStations.map((stationId, idx) => ({
+                    routeId: createdRoute.id,
+                    stationId,
+                    orderIndex: idx
+                }));
+                await RouteStationModel.bulkCreate(rows);
             }
-            throw new InternalError('common.errors.internal');
         }
+
+        return { messageKey: 'routes.success.added' };
     }
 
     //===================================================================================================
     //? function to Remove Route
     //===================================================================================================
     async removeRoute(routeId: unknown): Promise<{ messageKey: string }> {
-        try {
-            await helper.remove(RouteModel, 'id', String(routeId));
-            return { messageKey: 'common.crud.removed' };
-        
-        // ---------------------------------------
-        } catch (error) {
-            console.error('Error occured while removing route.', error);
-            throw error;
-        }
+        await helper.remove(RouteModel, 'id', String(routeId));
+        return { messageKey: 'common.crud.removed' };
     }
 
     //===================================================================================================
     //? function to Update Route
     //===================================================================================================
     async updateRoute(payload: Record<string, any>): Promise<{ messageKey: string }> {
-        try {
-            const body = payload || {};
-            const { id, title, color, status: routeStatusValue } = body;
-            const stations: string[] = Array.isArray(body.stations) ? body.stations : [];
+        const body = payload || {};
+        const { id, title, color, status: routeStatusValue } = body;
+        const stations: string[] = Array.isArray(body.stations) ? body.stations : [];
 
-            const startDefaultsResult = await stationService.fetchDefaultStartStations();
-            const endDefaultsResult = await stationService.fetchDefaultEndStations();
+        const startDefaultsResult = await stationService.fetchDefaultStartStations();
+        const endDefaultsResult = await stationService.fetchDefaultEndStations();
 
-            const startDefaultIds: string[] = startDefaultsResult.data as string[];
-            const endDefaultIds: string[] = endDefaultsResult.data as string[];
+        const startDefaultIds: string[] = startDefaultsResult.data as string[];
+        const endDefaultIds: string[] = endDefaultsResult.data as string[];
 
-            const finalStations = buildFinalStations(stations, startDefaultIds, endDefaultIds);
+        const finalStations = buildFinalStations(stations, startDefaultIds, endDefaultIds);
 
-            if(!id){
-                throw new ValidationError('routes.validation.idRequired');
-            }
-
-            // validate status (if provided)
-            if(routeStatusValue && !Object.values(status).includes(routeStatusValue)){
-                throw new ValidationError('common.errors.validation.invalidField');
-            }
-
-            const routeExists = await RouteModel.findOne({
-                where: { id },
-                attributes: ['id']
-            });
-
-            if(!routeExists){
-                throw new NotFoundError('common.errors.notFound');
-            }
-
-            // normalize title
-            const normalizedTitle = title ? String(title).toLowerCase().trim() : undefined;
-
-            // build updates
-            const updates: Record<string, any> = {};
-            if(normalizedTitle !== undefined) updates.title = normalizedTitle;
-            if(color !== undefined) updates.color = color;
-            if(routeStatusValue !== undefined) updates.status = routeStatusValue;
-            updates.totalStops = finalStations.length;
-
-            const [updatedCount] = await RouteModel.update(updates, {
-                where: { id }
-            });
-
-            if(updatedCount === 0){
-                throw new ConflictError('common.crud.notUpdated');
-            }
-
-            // replace stations list
-            await RouteStationModel.destroy({
-                where: { routeId: id }
-            });
-
-            if(finalStations.length > 0){
-                const rows = finalStations.map((stationId, idx) => ({
-                    routeId: id,
-                    stationId,
-                    orderIndex: idx
-                }));
-                await RouteStationModel.bulkCreate(rows);
-            }
-
-            return { messageKey: 'routes.success.updated' };
-
-        // ---------------------------------------
-        } catch (error) {
-            console.error('Error occured while updating route.', error);
-            throw error;
+        if(!id){
+            throw new ValidationError('routes.validation.idRequired');
         }
+
+        // validate status (if provided)
+        if(routeStatusValue && !Object.values(status).includes(routeStatusValue)){
+            throw new ValidationError('common.errors.validation.invalidField');
+        }
+
+        const routeExists = await RouteModel.findOne({
+            where: { id },
+            attributes: ['id']
+        });
+
+        if(!routeExists){
+            throw new NotFoundError('common.errors.notFound');
+        }
+
+        // normalize title
+        const normalizedTitle = title ? String(title).toLowerCase().trim() : undefined;
+
+        // build updates
+        const updates: Record<string, any> = {};
+        if(normalizedTitle !== undefined) updates.title = normalizedTitle;
+        if(color !== undefined) updates.color = color;
+        if(routeStatusValue !== undefined) updates.status = routeStatusValue;
+        updates.totalStops = finalStations.length;
+
+        const [updatedCount] = await RouteModel.update(updates, {
+            where: { id }
+        });
+
+        if(updatedCount === 0){
+            throw new ConflictError('common.crud.notUpdated');
+        }
+
+        // replace stations list
+        await RouteStationModel.destroy({
+            where: { routeId: id }
+        });
+
+        if(finalStations.length > 0){
+            const rows = finalStations.map((stationId, idx) => ({
+                routeId: id,
+                stationId,
+                orderIndex: idx
+            }));
+            await RouteStationModel.bulkCreate(rows);
+        }
+
+        return { messageKey: 'routes.success.updated' };
     }
 
 
@@ -204,71 +177,63 @@ export class RouteService{
     //? function to view All routes for operating buses or only Operating(working) routes 
     //===================================================================================================
     async viewRoutes(displayAll: boolean): Promise<{ messageKey: string; data: unknown }> {
-        try{
+        let routes: any[] = [];
 
-            let routes: any[] = [];
+        if(displayAll){
+            routes = await RouteModel.findAll({
+                attributes: ['id', 'title', 'color', 'totalStops', 'status']
+            });
 
-            if(displayAll){
-                routes = await RouteModel.findAll({
-                    attributes: ['id', 'title', 'color', 'totalStops', 'status']
-                });
-
-                for (const route of routes) {
-                    (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
-                }
-                // attach stations per route
-                for (const route of routes) {
-                    const routeStations = await RouteStationModel.findAll({
-                        where: { routeId: route.id },
-                        attributes: ['stationId', 'orderIndex'],
-                        order: [['orderIndex', 'ASC']]
-                    });
-
-                    const stationIds: string[] = routeStations.map((rs: any) => rs.stationId);
-                    let stations: { id: string; stationName: string; latitude: number; longitude: number }[] = [];
-                    if (stationIds.length > 0) {
-                        const stationRows = await stationModel.findAll({
-                            where: { id: stationIds },
-                            attributes: ['id', 'stationName', 'latitude', 'longitude']
-                        });
-                        const stationMap = new Map(
-                            stationRows.map((st: any) => [st.id, {
-                                stationName: st.stationName,
-                                latitude: st.latitude,
-                                longitude: st.longitude
-                            }])
-                        );
-                        stations = routeStations.map((rs: any) => ({
-                            id: rs.stationId,
-                            stationName: stationMap.get(rs.stationId)?.stationName || '',
-                            latitude: Number(stationMap.get(rs.stationId)?.latitude ?? 0),
-                            longitude: Number(stationMap.get(rs.stationId)?.longitude ?? 0)
-                        }));
-                    }
-
-                    (route as any).dataValues.stations = stations;
-                }
-                
-            }else{
-                routes = await RouteModel.findAll({
-                    where: {
-                        status: status.covered,
-                    },
-                    attributes: ['id', 'title', 'color', 'totalStops', 'status']
-                });
-
-                for (const route of routes) {
-                    (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
-                }
+            for (const route of routes) {
+                (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
             }
+            // attach stations per route
+            for (const route of routes) {
+                const routeStations = await RouteStationModel.findAll({
+                    where: { routeId: route.id },
+                    attributes: ['stationId', 'orderIndex'],
+                    order: [['orderIndex', 'ASC']]
+                });
 
-            return { messageKey: 'common.crud.fetched', data: routes };
+                const stationIds: string[] = routeStations.map((rs: any) => rs.stationId);
+                let stations: { id: string; stationName: string; latitude: number; longitude: number }[] = [];
+                if (stationIds.length > 0) {
+                    const stationRows = await stationModel.findAll({
+                        where: { id: stationIds },
+                        attributes: ['id', 'stationName', 'latitude', 'longitude']
+                    });
+                    const stationMap = new Map(
+                        stationRows.map((st: any) => [st.id, {
+                            stationName: st.stationName,
+                            latitude: st.latitude,
+                            longitude: st.longitude
+                        }])
+                    );
+                    stations = routeStations.map((rs: any) => ({
+                        id: rs.stationId,
+                        stationName: stationMap.get(rs.stationId)?.stationName || '',
+                        latitude: Number(stationMap.get(rs.stationId)?.latitude ?? 0),
+                        longitude: Number(stationMap.get(rs.stationId)?.longitude ?? 0)
+                    }));
+                }
 
-        // ---------------------------------------
-        }catch(error){
-            console.error('Error occured while viewing routes.', error);
-            throw new InternalError('common.errors.internal');
+                (route as any).dataValues.stations = stations;
+            }
+            
+        }else{
+            routes = await RouteModel.findAll({
+                where: {
+                    status: status.covered,
+                },
+                attributes: ['id', 'title', 'color', 'totalStops', 'status']
+            });
+
+            for (const route of routes) {
+                (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
+            }
         }
+
+        return { messageKey: 'common.crud.fetched', data: routes };
     }
 
 
@@ -276,9 +241,7 @@ export class RouteService{
     //? function to Fetch All Routes for Map View (station coordinates)
     //===================================================================================================
     async fetchRoutesMap(): Promise<{ messageKey: string; data: unknown }> {
-        try {
-
-            type StationRow = {
+        type StationRow = {
                 id: string;
                 stationName: string;
                 latitude: number;
@@ -411,12 +374,6 @@ export class RouteService{
             }
 
             return { messageKey: 'common.crud.fetched', data: routes };
-
-        // ---------------------------------------
-        } catch (error) {
-            console.error('Error occured while fetching routes map data.', error);
-            throw new InternalError('common.errors.internal');
-        }
     }
 
 }

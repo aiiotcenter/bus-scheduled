@@ -253,7 +253,7 @@ describe("DriverService", () => {
             const AuthServiceModule = require("@src/services/authService");
             AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockRejectedValueOnce(new Error("email failed"));
 
-            await expect(driverService.addDriver({ email: "test@example.com" })).rejects.toBeInstanceOf(InternalError);
+            await expect(driverService.addDriver({ email: "test@example.com" })).rejects.toThrow("error");
         });
     });
 
@@ -394,7 +394,7 @@ describe("DriverService", () => {
         test("should throw InternalError when fetching drivers fails", async () => {
             (UserModel.findAll as jest.Mock).mockRejectedValueOnce(new Error("DB error"));
 
-            await expect(driverService.fetchDrivers(true)).rejects.toBeInstanceOf(InternalError);
+            await expect(driverService.fetchDrivers(true)).rejects.toThrow("error");
         });
     });
 
@@ -457,7 +457,7 @@ describe("DriverService", () => {
 
             const promise = driverService.fetchDriverProfile("D123");
 
-            await expect(promise).rejects.toBeInstanceOf(InternalError);
+            await expect(promise).rejects.toThrow("error");
             await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
 
 
@@ -488,7 +488,7 @@ describe("DriverService", () => {
 
             const promise = driverService.fetchDriverSchedule("D123");
 
-            await expect(promise).rejects.toBeInstanceOf(InternalError);
+            await expect(promise).rejects.toThrow("error");
             await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
 
             expect(ScheduledTripsModel.findAll).toHaveBeenCalledTimes(1);

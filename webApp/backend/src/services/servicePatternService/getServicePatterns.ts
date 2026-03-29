@@ -12,7 +12,6 @@ import { ServicePatternDto, ServicePatternServiceResult } from "./types";
 //======================================================================================================================
 
 export const getServicePatterns = async (): Promise<ServicePatternServiceResult<ServicePatternDto[]>> => {
-    try {
         const rows = await ServicePatternModel.findAll({
             attributes: ["servicePatternId", "title"],
             include: [
@@ -42,8 +41,4 @@ export const getServicePatterns = async (): Promise<ServicePatternServiceResult<
         });
 
         return { messageKey: "common.crud.fetched", data };
-    } catch (error) {
-        console.error("Error occured while fetching service patterns.", error);
-        throw new InternalError("common.errors.internal");
-    }
 };

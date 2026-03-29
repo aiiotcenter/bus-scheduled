@@ -11,7 +11,6 @@ exports.BusService = void 0;
 const busModel_1 = __importDefault(require("../models/busModel"));
 //import Enums
 const busEnum_1 = require("../enums/busEnum");
-const errors_1 = require("../errors");
 const userHelper_1 = require("../helpers/userHelper");
 const helper = new userHelper_1.UserHelper();
 //===================================================================================================================================================
@@ -49,28 +48,21 @@ class BusService {
     //? function to view All/Operating Buses 
     //===================================================================================================
     async viewBuses(displayAll) {
-        try {
-            let routes = [];
-            if (displayAll) {
-                routes = await busModel_1.default.findAll({
-                    attributes: ['id', 'plate', 'brand', 'status']
-                });
-            }
-            else {
-                routes = await busModel_1.default.findAll({
-                    attributes: ['id', 'plate', 'brand', 'status'],
-                    where: {
-                        status: busEnum_1.status.operating,
-                    }
-                });
-            }
-            return { messageKey: 'common.crud.fetched', data: routes };
-            // ---------------------------------------
+        let routes = [];
+        if (displayAll) {
+            routes = await busModel_1.default.findAll({
+                attributes: ['id', 'plate', 'brand', 'status']
+            });
         }
-        catch (error) {
-            console.error('Error occured while viewing routes.', error);
-            throw new errors_1.InternalError('common.errors.internal');
+        else {
+            routes = await busModel_1.default.findAll({
+                attributes: ['id', 'plate', 'brand', 'status'],
+                where: {
+                    status: busEnum_1.status.operating,
+                }
+            });
         }
+        return { messageKey: 'common.crud.fetched', data: routes };
     }
 }
 exports.BusService = BusService;

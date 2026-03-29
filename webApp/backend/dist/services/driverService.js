@@ -67,7 +67,7 @@ class DriverService {
             if (error instanceof errors_1.NotFoundError) {
                 throw error;
             }
-            throw new errors_1.InternalError('common.errors.internal');
+            throw error;
         }
     }
     //===================================================================================================
@@ -98,145 +98,118 @@ class DriverService {
     //? function fetch All/ Active drivers 
     //===================================================================================================
     async fetchDrivers(displayAll, driverId) {
-        try {
-            const id = typeof driverId === 'string' ? driverId.trim() : '';
-            let drivers;
-            if (displayAll) {
-                drivers = await userModel_1.default.findAll({
-                    where: id
-                        ? { role: userEnum_1.role.driver, id }
-                        : { role: userEnum_1.role.driver },
-                    attributes: ['id', 'name', 'gender', 'birthDate', 'phone', 'email', 'licenseNumber', 'licenseExpiryDate', 'status']
-                });
-                // view only active drivers ------------------------------------------------------
-            }
-            else {
-                drivers = await userModel_1.default.findAll({
-                    attributes: ['id', 'name', 'gender', 'birthDate', 'phone', 'email', 'licenseNumber', 'licenseExpiryDate', 'status'],
-                    where: {
-                        role: userEnum_1.role.driver,
-                        status: userEnum_1.status.active
-                    }
-                });
-            }
-            return { messageKey: 'drivers.success.fetched', data: drivers };
-            // --------------------------------------------------------------------------
+        const id = typeof driverId === 'string' ? driverId.trim() : '';
+        let drivers;
+        if (displayAll) {
+            drivers = await userModel_1.default.findAll({
+                where: id
+                    ? { role: userEnum_1.role.driver, id }
+                    : { role: userEnum_1.role.driver },
+                attributes: ['id', 'name', 'gender', 'birthDate', 'phone', 'email', 'licenseNumber', 'licenseExpiryDate', 'status']
+            });
+            // view only active drivers ------------------------------------------------------
         }
-        catch (error) {
-            throw new errors_1.InternalError('common.errors.internal');
+        else {
+            drivers = await userModel_1.default.findAll({
+                attributes: ['id', 'name', 'gender', 'birthDate', 'phone', 'email', 'licenseNumber', 'licenseExpiryDate', 'status'],
+                where: {
+                    role: userEnum_1.role.driver,
+                    status: userEnum_1.status.active
+                }
+            });
         }
+        return { messageKey: 'drivers.success.fetched', data: drivers };
     }
     //===================================================================================================
     //? function to Fetch Driver Profile
     //===================================================================================================
     async fetchDriverProfile(driverId) {
-        try {
-            const id = String(driverId ?? '').trim();
-            if (!id) {
-                throw new errors_1.ValidationError('common.errors.validation.required');
-            }
-            const driver = await userModel_1.default.findOne({
-                where: { id, role: userEnum_1.role.driver },
-                attributes: ['id', 'name', 'phone', 'language', 'appearance'],
-            });
-            if (!driver) {
-                throw new errors_1.NotFoundError('common.errors.notFound');
-            }
-            return { messageKey: 'drivers.success.fetched', data: driver };
-            // ----------------------------------------------------------------------------
+        const id = String(driverId ?? '').trim();
+        if (!id) {
+            throw new errors_1.ValidationError('common.errors.validation.required');
         }
-        catch (error) {
-            if (error instanceof errors_1.ValidationError) {
-                throw error;
-            }
-            if (error instanceof errors_1.NotFoundError) {
-                throw error;
-            }
-            throw new errors_1.InternalError('common.errors.internal');
+        const driver = await userModel_1.default.findOne({
+            where: { id, role: userEnum_1.role.driver },
+            attributes: ['id', 'name', 'phone', 'language', 'appearance'],
+        });
+        if (!driver) {
+            throw new errors_1.NotFoundError('common.errors.notFound');
         }
+        return { messageKey: 'drivers.success.fetched', data: driver };
     }
     //===================================================================================================
     //? function to Fetch Specific Driver's Schedule (from today onwards)
     //===================================================================================================
     async fetchDriverSchedule(driverId) {
-        try {
-            const id = String(driverId ?? '').trim();
-            if (!id) {
-                throw new errors_1.ValidationError('common.errors.validation.required');
-            }
-            const today = new Date();
-            const todayStr = today.toISOString().split('T')[0] ?? '';
-            const trips = await scheduledTripsModel_1.default.findAll({
-                where: { driverId: id },
-                attributes: ["detailedScheduleId", "scheduleId", "time", "routeId", "driverId", "busId"],
-                include: [
-                    {
-                        model: scheduleModel_1.default,
-                        as: "schedule",
-                        attributes: ["scheduleId", "date", "day"],
-                        where: {
-                            date: { [sequelize_1.Op.gte]: todayStr },
-                        },
-                        required: true,
+        const id = String(driverId ?? '').trim();
+        if (!id) {
+            throw new errors_1.ValidationError('common.errors.validation.required');
+        }
+        const today = new Date();
+        const todayStr = today.toISOString().split('T')[0] ?? '';
+        const trips = await scheduledTripsModel_1.default.findAll({
+            where: { driverId: id },
+            attributes: ["detailedScheduleId", "scheduleId", "time", "routeId", "driverId", "busId"],
+            include: [
+                {
+                    model: scheduleModel_1.default,
+                    as: "schedule",
+                    attributes: ["scheduleId", "date", "day"],
+                    where: {
+                        date: { [sequelize_1.Op.gte]: todayStr },
                     },
-                    {
-                        model: routeModel_1.default,
-                        as: "route",
-                        attributes: ["id", "title", "color"],
-                    },
-                    {
-                        model: busModel_1.default,
-                        as: "bus",
-                        attributes: ["id", "plate"],
-                    },
-                ],
-                // 
-                order: [
-                    [{ model: scheduleModel_1.default, as: "schedule" }, "date", "ASC"],
-                    ["time", "ASC"],
-                ],
-            });
-            const byDay = new Map();
-            for (const row of trips) {
-                const scheduleDate = row?.schedule?.date;
-                const dateStr = scheduleHelper.formatDateForMobileUi(scheduleDate);
-                const dayStr = typeof row?.schedule?.day === 'string' ? row.schedule.day.trim() : '';
-                const key = `${dateStr}|${dayStr}`;
-                if (!byDay.has(key)) {
-                    byDay.set(key, {
-                        date: dateStr,
-                        day: dayStr,
-                        driverId: id,
-                        scheduleDetails: [],
-                    });
-                }
-                const time = scheduleHelper.normalizeTimeToHourMinute(row?.time);
-                const routeName = typeof row?.route?.title === 'string' ? row.route.title.trim() : '';
-                const busIdStr = typeof row?.bus?.id === 'string' ? row.bus.id.trim() : '';
-                const busPlate = typeof row?.bus?.plate === 'string' ? row.bus.plate.trim() : '';
-                const routeColor = typeof row?.route?.color === 'string' ? row.route.color.trim() : '';
-                const routeColorInt = (0, colorHelper_1.normalizeColorToArgbInt)(row?.route?.color);
-                byDay.get(key).scheduleDetails.push({
-                    time,
-                    routeName,
-                    routeColor,
-                    routeColorInt,
-                    busId: busIdStr,
-                    busPlate,
+                    required: true,
+                },
+                {
+                    model: routeModel_1.default,
+                    as: "route",
+                    attributes: ["id", "title", "color"],
+                },
+                {
+                    model: busModel_1.default,
+                    as: "bus",
+                    attributes: ["id", "plate"],
+                },
+            ],
+            // 
+            order: [
+                [{ model: scheduleModel_1.default, as: "schedule" }, "date", "ASC"],
+                ["time", "ASC"],
+            ],
+        });
+        const byDay = new Map();
+        for (const row of trips) {
+            const scheduleDate = row?.schedule?.date;
+            const dateStr = scheduleHelper.formatDateForMobileUi(scheduleDate);
+            const dayStr = typeof row?.schedule?.day === 'string' ? row.schedule.day.trim() : '';
+            const key = `${dateStr}|${dayStr}`;
+            if (!byDay.has(key)) {
+                byDay.set(key, {
+                    date: dateStr,
+                    day: dayStr,
+                    driverId: id,
+                    scheduleDetails: [],
                 });
             }
-            return {
-                messageKey: 'drivers.success.fetched',
-                data: Array.from(byDay.values()),
-            };
-            // ---------------------------------------------------------------------------------
+            const time = scheduleHelper.normalizeTimeToHourMinute(row?.time);
+            const routeName = typeof row?.route?.title === 'string' ? row.route.title.trim() : '';
+            const busIdStr = typeof row?.bus?.id === 'string' ? row.bus.id.trim() : '';
+            const busPlate = typeof row?.bus?.plate === 'string' ? row.bus.plate.trim() : '';
+            const routeColor = typeof row?.route?.color === 'string' ? row.route.color.trim() : '';
+            const routeColorInt = (0, colorHelper_1.normalizeColorToArgbInt)(row?.route?.color);
+            byDay.get(key).scheduleDetails.push({
+                time,
+                routeName,
+                routeColor,
+                routeColorInt,
+                busId: busIdStr,
+                busPlate,
+            });
         }
-        catch (error) {
-            if (error instanceof errors_1.ValidationError) {
-                throw error;
-            }
-            throw new errors_1.InternalError('common.errors.internal');
-        }
+        return {
+            messageKey: 'drivers.success.fetched',
+            data: Array.from(byDay.values()),
+        };
     }
 }
 exports.DriverService = DriverService;
