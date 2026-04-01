@@ -86,55 +86,46 @@ class RouteService {
     //===================================================================================================
     async updateRoute(payload) {
         const body = payload || {};
-        const { id, title, color, status: routeStatusValue } = body;
         const stations = Array.isArray(body.stations) ? body.stations : [];
         const startDefaultsResult = await stationService.fetchDefaultStartStations();
         const endDefaultsResult = await stationService.fetchDefaultEndStations();
         const startDefaultIds = startDefaultsResult.data;
         const endDefaultIds = endDefaultsResult.data;
         const finalStations = (0, routeHelper_1.buildFinalStations)(stations, startDefaultIds, endDefaultIds);
-        if (!id) {
-            throw new errors_1.ValidationError('routes.validation.idRequired');
-        }
-        // validate status (if provided)
-        if (routeStatusValue && !Object.values(routeEnum_1.status).includes(routeStatusValue)) {
-            throw new errors_1.ValidationError('common.errors.validation.invalidField');
-        }
-        const routeExists = await routeModel_1.default.findOne({
-            where: { id },
-            attributes: ['id']
+        const finalPayload = {
+            ...body,
+            totalStops: finalStations.length
+        };
+        const { updated } = await helper.update(routeModel_1.default, finalPayload, {
+            transform: async (data) => {
+                const out = { ...data };
+                if (out.title) {
+                    out.title = String(out.title).toLowerCase().trim();
+                }
+                // remove non-column field
+                delete out.stations;
+                return out;
+            },
+            enumFields: [
+                { field: "status", enumObj: routeEnum_1.status }
+            ]
         });
-        if (!routeExists) {
-            throw new errors_1.NotFoundError('common.errors.notFound');
-        }
-        // normalize title
-        const normalizedTitle = title ? String(title).toLowerCase().trim() : undefined;
-        // build updates
-        const updates = {};
-        if (normalizedTitle !== undefined)
-            updates.title = normalizedTitle;
-        if (color !== undefined)
-            updates.color = color;
-        if (routeStatusValue !== undefined)
-            updates.status = routeStatusValue;
-        updates.totalStops = finalStations.length;
-        const [updatedCount] = await routeModel_1.default.update(updates, {
-            where: { id }
-        });
-        if (updatedCount === 0) {
+        if (!updated) {
             throw new errors_1.ConflictError('common.crud.notUpdated');
         }
         // replace stations list
-        await routeStationModel_1.default.destroy({
-            where: { routeId: id }
-        });
-        if (finalStations.length > 0) {
-            const rows = finalStations.map((stationId, idx) => ({
-                routeId: id,
-                stationId,
-                orderIndex: idx
-            }));
-            await routeStationModel_1.default.bulkCreate(rows);
+        if (body.id) {
+            await routeStationModel_1.default.destroy({
+                where: { routeId: body.id }
+            });
+            if (finalStations.length > 0) {
+                const rows = finalStations.map((stationId, idx) => ({
+                    routeId: body.id,
+                    stationId,
+                    orderIndex: idx
+                }));
+                await routeStationModel_1.default.bulkCreate(rows);
+            }
         }
         return { messageKey: 'routes.success.updated' };
     }

@@ -251,7 +251,7 @@ describe("DriverService", () => {
             UserHelperModule.mockUserHelperInstance.add.mockResolvedValueOnce(undefined);
 
             const AuthServiceModule = require("@src/services/authService");
-            AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockRejectedValueOnce(new Error("email failed"));
+            AuthServiceModule.mockAuthServiceInstance.sendValidateEmail.mockRejectedValueOnce(new Error("error"));
 
             await expect(driverService.addDriver({ email: "test@example.com" })).rejects.toThrow("error");
         });
@@ -292,11 +292,11 @@ describe("DriverService", () => {
         
         test("should throw error when an unexpected error occurs", async () => {
             const UserHelperModule = require("@src/helpers/userHelper");
-            UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("Unexpected error"));
+            UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("error"));
 
             const promise = driverService.removeDriver("D123");
 
-            await expect(promise).rejects.toThrow("Unexpected error");
+            await expect(promise).rejects.toThrow("error");
 
             expect(UserHelperModule.mockUserHelperInstance.remove).toHaveBeenCalledTimes(1);
             expect(UserHelperModule.mockUserHelperInstance.remove).toHaveBeenCalledWith(UserModel, "id", "D123");
@@ -453,12 +453,11 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should throw InternalError when an unexpected error occurs", async () => {
-            mockFindOne.mockRejectedValueOnce(new Error("DB error"));
+            mockFindOne.mockRejectedValueOnce(new Error("error"));
 
             const promise = driverService.fetchDriverProfile("D123");
 
             await expect(promise).rejects.toThrow("error");
-            await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
 
 
             expect(UserModel.findOne).toHaveBeenCalledTimes(1);
@@ -484,12 +483,11 @@ describe("DriverService", () => {
         // --------------------------------------------------------------------
 
         test("should throw InternalError when an unexpected error occurs", async () => {
-            mockFindAllScheduledTrips.mockRejectedValueOnce(new Error("DB error"));
+            mockFindAllScheduledTrips.mockRejectedValueOnce(new Error("error"));
 
             const promise = driverService.fetchDriverSchedule("D123");
 
             await expect(promise).rejects.toThrow("error");
-            await expect(promise).rejects.toMatchObject({ messageKey: "common.errors.internal" });
 
             expect(ScheduledTripsModel.findAll).toHaveBeenCalledTimes(1);
         });

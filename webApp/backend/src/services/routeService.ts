@@ -107,7 +107,6 @@ export class RouteService{
     //===================================================================================================
     async updateRoute(payload: Record<string, any>): Promise<{ messageKey: string }> {
         const body = payload || {};
-        const { id, title, color, status: routeStatusValue } = body;
         const stations: string[] = Array.isArray(body.stations) ? body.stations : [];
 
         const startDefaultsResult = await stationService.fetchDefaultStartStations();
@@ -118,54 +117,44 @@ export class RouteService{
 
         const finalStations = buildFinalStations(stations, startDefaultIds, endDefaultIds);
 
-        if(!id){
-            throw new ValidationError('routes.validation.idRequired');
-        }
+        const finalPayload: Record<string, any> = {
+            ...body,
+            totalStops: finalStations.length
+        };
 
-        // validate status (if provided)
-        if(routeStatusValue && !Object.values(status).includes(routeStatusValue)){
-            throw new ValidationError('common.errors.validation.invalidField');
-        }
-
-        const routeExists = await RouteModel.findOne({
-            where: { id },
-            attributes: ['id']
+        const { updated } = await helper.update(RouteModel, finalPayload, {
+            transform: async (data: Record<string, any>) => {
+                const out = { ...data };
+                if (out.title) {
+                    out.title = String(out.title).toLowerCase().trim();
+                }
+                // remove non-column field
+                delete out.stations;
+                return out;
+            },
+            enumFields: [
+                { field: "status", enumObj: status }
+            ]
         });
 
-        if(!routeExists){
-            throw new NotFoundError('common.errors.notFound');
-        }
-
-        // normalize title
-        const normalizedTitle = title ? String(title).toLowerCase().trim() : undefined;
-
-        // build updates
-        const updates: Record<string, any> = {};
-        if(normalizedTitle !== undefined) updates.title = normalizedTitle;
-        if(color !== undefined) updates.color = color;
-        if(routeStatusValue !== undefined) updates.status = routeStatusValue;
-        updates.totalStops = finalStations.length;
-
-        const [updatedCount] = await RouteModel.update(updates, {
-            where: { id }
-        });
-
-        if(updatedCount === 0){
+        if (!updated) {
             throw new ConflictError('common.crud.notUpdated');
         }
 
         // replace stations list
-        await RouteStationModel.destroy({
-            where: { routeId: id }
-        });
+        if (body.id) {
+            await RouteStationModel.destroy({
+                where: { routeId: body.id }
+            });
 
-        if(finalStations.length > 0){
-            const rows = finalStations.map((stationId, idx) => ({
-                routeId: id,
-                stationId,
-                orderIndex: idx
-            }));
-            await RouteStationModel.bulkCreate(rows);
+            if (finalStations.length > 0) {
+                const rows = finalStations.map((stationId, idx) => ({
+                    routeId: body.id,
+                    stationId,
+                    orderIndex: idx
+                }));
+                await RouteStationModel.bulkCreate(rows);
+            }
         }
 
         return { messageKey: 'routes.success.updated' };
@@ -242,138 +231,138 @@ export class RouteService{
     //===================================================================================================
     async fetchRoutesMap(): Promise<{ messageKey: string; data: unknown }> {
         type StationRow = {
-                id: string;
-                stationName: string;
-                latitude: number;
-                longitude: number;
-            };
+            id: string;
+            stationName: string;
+            latitude: number;
+            longitude: number;
+        };
 
-            type RouteStationRow = {
-                stationId: string;
-                orderIndex: number;
-            };
+        type RouteStationRow = {
+            stationId: string;
+            orderIndex: number;
+        };
 
-            type RoutePoint = {
-                stationId: string;
-                stationName: string;
-                latitude: number;
-                longitude: number;
-                orderIndex: number;
-            };
+        type RoutePoint = {
+            stationId: string;
+            stationName: string;
+            latitude: number;
+            longitude: number;
+            orderIndex: number;
+        };
 
-            const routes = await RouteModel.findAll({
-                attributes: ['id', 'title', 'color', 'totalStops', 'status']
+        const routes = await RouteModel.findAll({
+            attributes: ['id', 'title', 'color', 'totalStops', 'status']
+        });
+
+        for (const route of routes) {
+            (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
+        }
+
+        // attach ordered points per route -------------------------------------------------
+        for (const route of routes) {
+            const routeStations = await RouteStationModel.findAll({
+                where: { routeId: route.id },
+                attributes: ['stationId', 'orderIndex'],
+                order: [['orderIndex', 'ASC']]
             });
 
-            for (const route of routes) {
-                (route as any).dataValues.colorInt = normalizeColorToArgbInt((route as any)?.color);
+            // get route stations with their order index ------------------------------------------
+            const routeStationsTyped: RouteStationRow[] = routeStations.map((rs) => ({
+                stationId: String((rs as unknown as { stationId: unknown }).stationId),
+                orderIndex: Number((rs as unknown as { orderIndex: unknown }).orderIndex ?? 0),
+            }));
+
+            // get route stations ids ordered by orderIndex ------------------------------------------
+            const stationIdsFromDb: string[] = routeStationsTyped
+                .map((routeStation) => routeStation.stationId)
+                .map((id) => String(id));
+
+            // if default start/end stations are missing, enforce them-------------------------------
+            const startDefaultsResult = await stationService.fetchDefaultStartStations();
+            const endDefaultsResult = await stationService.fetchDefaultEndStations();
+
+            const startDefaultIds: string[] = startDefaultsResult.data as string[];
+            const endDefaultIds: string[] = endDefaultsResult.data as string[];
+
+            const requiredDefaultIds = Array.from(new Set([
+                ...(Array.isArray(startDefaultIds) ? startDefaultIds : []),
+                ...(Array.isArray(endDefaultIds) ? endDefaultIds : []),
+            ]));
+
+            const hasAllRequiredDefaults = requiredDefaultIds.every((id) => stationIdsFromDb.includes(id));
+
+            const stationIdsOrdered: string[] = hasAllRequiredDefaults
+                ? stationIdsFromDb
+                : buildFinalStations(stationIdsFromDb, startDefaultIds, endDefaultIds);
+
+            // -------------------------------------------------------------------
+
+            // use unique ids only for DB fetch, but keep ordered list for points
+            const stationIdsFetch: string[] = Array.from(new Set(stationIdsOrdered));
+
+            if (stationIdsFetch.length === 0) {
+                (route as any).dataValues.points = [];
+                continue;
             }
 
-            // attach ordered points per route -------------------------------------------------
-            for (const route of routes) {
-                const routeStations = await RouteStationModel.findAll({
-                    where: { routeId: route.id },
-                    attributes: ['stationId', 'orderIndex'],
-                    order: [['orderIndex', 'ASC']]
-                });
+            // get stations data from db ---------------------
+            const stationRows = await stationModel.findAll({
+                where: { id: stationIdsFetch },
+                attributes: ['id', 'stationName', 'latitude', 'longitude']
+            });
 
-                // get route stations with their order index ------------------------------------------
-                const routeStationsTyped: RouteStationRow[] = routeStations.map((rs) => ({
-                    stationId: String((rs as unknown as { stationId: unknown }).stationId),
-                    orderIndex: Number((rs as unknown as { orderIndex: unknown }).orderIndex ?? 0),
-                }));
+            const stationRowsTyped: StationRow[] = stationRows.map((st) => ({
+                id: String((st as unknown as { id: unknown }).id),
+                stationName: String((st as unknown as { stationName: unknown }).stationName ?? ''),
+                latitude: Number((st as unknown as { latitude: unknown }).latitude ?? 0),
+                longitude: Number((st as unknown as { longitude: unknown }).longitude ?? 0),
+            }));
 
-                // get route stations ids ordered by orderIndex ------------------------------------------
-                const stationIdsFromDb: string[] = routeStationsTyped
-                    .map((routeStation) => routeStation.stationId)
-                    .map((id) => String(id));
+            const stationMap = new Map<string, StationRow>(
+                stationRowsTyped.map((st) => [st.id, st])
+            );
+            //--------------------------------------------------
 
-                // if default start/end stations are missing, enforce them-------------------------------
-                const startDefaultsResult = await stationService.fetchDefaultStartStations();
-                const endDefaultsResult = await stationService.fetchDefaultEndStations();
+            const orderIndexMap = new Map<string, number>(
+                routeStationsTyped.map((rs) => [rs.stationId, rs.orderIndex])
+            );
 
-                const startDefaultIds: string[] = startDefaultsResult.data as string[];
-                const endDefaultIds: string[] = endDefaultsResult.data as string[];
+            // create points array from ordered stations "stationIdsOrdered" -------------------------
+            const points: RoutePoint[] = [];
 
-                const requiredDefaultIds = Array.from(new Set([
-                    ...(Array.isArray(startDefaultIds) ? startDefaultIds : []),
-                    ...(Array.isArray(endDefaultIds) ? endDefaultIds : []),
-                ]));
+            const pointCoords: Array<{ latitude: number; longitude: number }> = [];
 
-                const hasAllRequiredDefaults = requiredDefaultIds.every((id) => stationIdsFromDb.includes(id));
-
-                const stationIdsOrdered: string[] = hasAllRequiredDefaults
-                    ? stationIdsFromDb
-                    : buildFinalStations(stationIdsFromDb, startDefaultIds, endDefaultIds);
-
-                // -------------------------------------------------------------------
-
-                // use unique ids only for DB fetch, but keep ordered list for points
-                const stationIdsFetch: string[] = Array.from(new Set(stationIdsOrdered));
-
-                if (stationIdsFetch.length === 0) {
-                    (route as any).dataValues.points = [];
+            // loop through ordered stations and ensure they are found wiht valid coordinates
+            for (const stationId of stationIdsOrdered) {
+                const station = stationMap.get(stationId);
+                // skip if station not found 
+                if (!station) {
                     continue;
                 }
-
-                // get stations data from db ---------------------
-                const stationRows = await stationModel.findAll({
-                    where: { id: stationIdsFetch },
-                    attributes: ['id', 'stationName', 'latitude', 'longitude']
+                // skip if station has invalid coordinates
+                if (station.latitude === 0 || station.longitude === 0) {
+                    continue;
+                }
+                // else push to points
+                points.push({
+                    stationId,
+                    stationName: station.stationName,
+                    latitude: station.latitude,
+                    longitude: station.longitude,
+                    orderIndex: Number(orderIndexMap.get(stationId) ?? 0)
                 });
 
-                const stationRowsTyped: StationRow[] = stationRows.map((st) => ({
-                    id: String((st as unknown as { id: unknown }).id),
-                    stationName: String((st as unknown as { stationName: unknown }).stationName ?? ''),
-                    latitude: Number((st as unknown as { latitude: unknown }).latitude ?? 0),
-                    longitude: Number((st as unknown as { longitude: unknown }).longitude ?? 0),
-                }));
-
-                const stationMap = new Map<string, StationRow>(
-                    stationRowsTyped.map((st) => [st.id, st])
-                );
-                //--------------------------------------------------
-
-                const orderIndexMap = new Map<string, number>(
-                    routeStationsTyped.map((rs) => [rs.stationId, rs.orderIndex])
-                );
-
-                // create points array from ordered stations "stationIdsOrdered" -------------------------
-                const points: RoutePoint[] = [];
-
-                const pointCoords: Array<{ latitude: number; longitude: number }> = [];
-
-                // loop through ordered stations and ensure they are found wiht valid coordinates
-                for (const stationId of stationIdsOrdered) {
-                    const station = stationMap.get(stationId);
-                    // skip if station not found 
-                    if (!station) {
-                        continue;
-                    }
-                    // skip if station has invalid coordinates
-                    if (station.latitude === 0 || station.longitude === 0) {
-                        continue;
-                    }
-                    // else push to points
-                    points.push({
-                        stationId,
-                        stationName: station.stationName,
-                        latitude: station.latitude,
-                        longitude: station.longitude,
-                        orderIndex: Number(orderIndexMap.get(stationId) ?? 0)
-                    });
-
-                    pointCoords.push({ latitude: station.latitude, longitude: station.longitude });
-                }
-
-                // get road-following polyline geometry ---------------------------------------------
-                const routedGeometry = await fetchOsrmGeometry(pointCoords);
-                (route as any).dataValues.geometry = routedGeometry ?? pointCoords;
-
-                (route as any).dataValues.points = points;
+                pointCoords.push({ latitude: station.latitude, longitude: station.longitude });
             }
 
-            return { messageKey: 'common.crud.fetched', data: routes };
+            // get road-following polyline geometry ---------------------------------------------
+            const routedGeometry = await fetchOsrmGeometry(pointCoords);
+            (route as any).dataValues.geometry = routedGeometry ?? pointCoords;
+
+            (route as any).dataValues.points = points;
+        }
+
+        return { messageKey: 'common.crud.fetched', data: routes };
     }
 
 }
