@@ -4,7 +4,7 @@
 
 import stationModel from '@src/models/stationModel';
 import RouteStationModel from '@src/models/routeStationModel';
-import RouteModel from '@src/models/routeModel';
+
 import { StationService } from "@src/services/stationService";
 
 import { ConflictError, InternalError, NotFoundError, ValidationError } from "@src/errors";
@@ -29,6 +29,7 @@ jest.mock('@src/models/routeStationModel', () => ({
         findAll: jest.fn(),
         destroy: jest.fn(),
         bulkCreate: jest.fn(),
+        generateNextRouteStationId: jest.fn(),
     },
 }));
 
@@ -47,6 +48,9 @@ jest.mock('@src/config/database', () => ({
         }),
     },
 }));
+
+
+// -------------------------------------------------------
 
 jest.mock("@src/helpers/userHelper", () => {
     const mockUserHelperInstance = {
@@ -133,7 +137,7 @@ describe("StationService", () => {
 
         jest.spyOn(console, "error").mockImplementation(() => undefined);
         
-        // Mock private function to avoid running complex DB logic during these unit tests
+        // Mock private function 
         syncSpy = jest.spyOn(stationService as any, 'syncDefaultStationsToAllRoutes').mockResolvedValue(undefined);
     });
 

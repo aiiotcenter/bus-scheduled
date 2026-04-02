@@ -3,18 +3,18 @@
  //? Unit Tests
  //==========================================================================================================
  
- import RouteModel from '../src/models/routeModel'
- import { RouteService } from "../src/services/routeService";
+ import RouteModel from '@src/models/routeModel'
+ import { RouteService } from "@src/services/routeService";
  
- import { NotFoundError, ValidationError, ConflictError } from "../src/errors";
- import { status } from "../src/enums/routeEnum";
+ import { NotFoundError, ValidationError, ConflictError } from "@src/errors";
+ import { status } from "@src/enums/routeEnum";
 import { update } from '@src/helpers/userHelper/update';
 import { Transform } from 'stream';
 import RouteStationModel from '@src/models/routeStationModel';
 import stationModel from '@src/models/stationModel';
  
  // mock models/helpers ------------------------------------------------------------------------
- jest.mock("../src/models/routeModel", () => ({
+ jest.mock("@src/models/routeModel", () => ({
      __esModule: true,
      default: {
          findAll: jest.fn(),
@@ -27,7 +27,7 @@ import stationModel from '@src/models/stationModel';
      },
  }));
 
- jest.mock("../src/models/routeStationModel", () => ({
+ jest.mock("@src/models/routeStationModel", () => ({
     __esModule: true,
     default: {
         findAll: jest.fn(),
@@ -36,25 +36,25 @@ import stationModel from '@src/models/stationModel';
     },
  }));
 
- jest.mock("../src/models/stationModel", () => ({
+ jest.mock("@src/models/stationModel", () => ({
     __esModule: true,
     default: {
         findAll: jest.fn(),
     },
  }));
 
- jest.mock("../src/helpers/colorHelper", () => ({
+ jest.mock("@src/helpers/colorHelper", () => ({
     normalizeColorToArgbInt: jest.fn(() => 12345),
  }));
 
- jest.mock("../src/helpers/routeHelper", () => ({
+ jest.mock("@src/helpers/routeHelper", () => ({
     buildFinalStations: jest.fn((stations) => stations),
     fetchOsrmGeometry: jest.fn(() => Promise.resolve([])),
  }));
 
 
  
- jest.mock("../src/helpers/userHelper", () => {
+ jest.mock("@src/helpers/userHelper", () => {
      const mockUserHelperInstance = {
          add: jest.fn(),
          remove: jest.fn(),
@@ -70,7 +70,7 @@ import stationModel from '@src/models/stationModel';
  });
 
 // mocking station service
- jest.mock("../src/services/stationService", () => {
+ jest.mock("@src/services/stationService", () => {
     return {
         StationService: jest.fn().mockImplementation(() => ({
             fetchDefaultStartStations: jest.fn().mockResolvedValue({ data: [] }),
@@ -121,7 +121,7 @@ import stationModel from '@src/models/stationModel';
      beforeEach(() => {
          jest.clearAllMocks();
  
-         const UserHelperModule = require("../src/helpers/userHelper");
+         const UserHelperModule = require("@src/helpers/userHelper");
          UserHelperModule.mockUserHelperInstance.add.mockClear();
          UserHelperModule.mockUserHelperInstance.remove.mockClear();
          UserHelperModule.mockUserHelperInstance.update.mockClear();
@@ -139,7 +139,7 @@ import stationModel from '@src/models/stationModel';
      
      describe('addRoute', () => {
         test("should add route successfully", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockResolvedValueOnce(undefined);
 
             const payload = { title: "Route 1", color: "#000000", status: status.covered, totalStops: 0 };
@@ -160,7 +160,7 @@ import stationModel from '@src/models/stationModel';
         // -------------------------------------------------------------------------------
 
         test("should throw Validation Error when required fields are missing", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(
                 new ValidationError("common.errors.validation.fillAllFields")
             );
@@ -173,7 +173,7 @@ import stationModel from '@src/models/stationModel';
         // -------------------------------------------------------------------------------
 
         test("should throw error when an unexpected error occurs", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.add.mockRejectedValueOnce(new Error("error"));
 
             const payload = { title: "Route 1", color: "#000000", status: status.covered };
@@ -190,7 +190,7 @@ import stationModel from '@src/models/stationModel';
       
      describe('removeRoute', () => {
         test("should remove route successfully", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockResolvedValueOnce(undefined);
 
             const result = await routeService.removeRoute("R001");
@@ -208,7 +208,7 @@ import stationModel from '@src/models/stationModel';
         // ------------------------------------------------------------------------------
 
         test("should throw NotFoundError when route is not found", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(
                 new NotFoundError("common.errors.notFound")
             );
@@ -221,7 +221,7 @@ import stationModel from '@src/models/stationModel';
         // ------------------------------------------------------------------------------
 
         test("should throw error when an unexpected error occurs", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.remove.mockRejectedValueOnce(new Error("error"));
 
             const promise = routeService.removeRoute("R001");
@@ -236,7 +236,7 @@ import stationModel from '@src/models/stationModel';
     // ============================================================================================================
       describe('updateRoute', () => {
         test("should update route successfully", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.update.mockResolvedValueOnce({updated: true} as any);
 
             const payload = {id: "R001", title: "Route 1", color: "#000000", status: status.covered, totalStops: 0 };
@@ -259,7 +259,7 @@ import stationModel from '@src/models/stationModel';
         // ------------------------------------------------------------------------------
 
         test("should throw NotFound Error when route is not found", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.update.mockRejectedValueOnce(
                 new NotFoundError("common.errors.notFound")
             );
@@ -273,7 +273,7 @@ import stationModel from '@src/models/stationModel';
         // ------------------------------------------------------------------------------
 
         test("should throw error when an unexpected error occurs", async() =>{
-            const UserHelperModule = require("../src/helpers/userHelper");
+            const UserHelperModule = require("@src/helpers/userHelper");
             UserHelperModule.mockUserHelperInstance.update.mockRejectedValueOnce(new Error("error"));
 
             const payload = { title: "Route 1", color: "#000000", status: status.covered };
@@ -314,7 +314,7 @@ import stationModel from '@src/models/stationModel';
 
             // Mock station details for the FIRST route
             // its functionality is same logic as the one above, the different only lays in the implementation method, above i wrote it all in 1 line , I mocked and called the resoure earlier
-            const stationModel = require("../src/models/stationModel").default;
+            const stationModel = require("@src/models/stationModel").default;
             stationModel.findAll.mockResolvedValueOnce(mockStationRows);
 
 

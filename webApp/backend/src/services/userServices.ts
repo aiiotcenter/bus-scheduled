@@ -17,7 +17,7 @@ import authHleper from '../helpers/authHelpher';
 const authHelper = new authHleper();
 
 
-import {  ValidationError } from '../errors';
+import { ValidationError } from '../errors';
 
 //===================================================================================================
 
@@ -29,8 +29,10 @@ export class UserService{
     //===================================================================================================
 
     async changeLanguage(userId: string, language: unknown): Promise<{ updated: boolean; messageKey: string }> {
-        if (typeof language !== 'string' || language.trim() === '') {
+        if (typeof language !== 'string') {
             throw new ValidationError('common.errors.validation.invalidField');
+        }else if (language.trim() === '') {
+            throw new ValidationError('common.errors.validation.fillAllFields');
         }
 
         const result = await userhelper.update(userModel, { id: userId, language: language.trim() });
@@ -47,8 +49,10 @@ export class UserService{
     //===================================================================================================
 
     async changeAppearance(userId: string, appearance: unknown): Promise<{ updated: boolean; messageKey: string }> {
-        if (typeof appearance !== 'string' || appearance.trim() === '') {
+        if (typeof appearance !== 'string') {
             throw new ValidationError('common.errors.validation.invalidField');
+        }else if (appearance.trim() === '') {
+            throw new ValidationError('common.errors.validation.fillAllFields');
         }
 
         const result = await userhelper.update(userModel, { id: userId, appearance: appearance.trim() });
@@ -60,30 +64,30 @@ export class UserService{
     }
 
 
-    // =================================================================================================================================
-    //? change route (by driver)
-    //===================================================================================================================    
+    // // =================================================================================================================================
+    // //? change route (by driver)
+    // //===================================================================================================================    
 
-    async changeRoute(userId: string, payload: Record<string, any>): Promise<{ updated: boolean; messageKey: string }> {
-        const busId = String(payload?.id ?? '');
+    // async changeRoute(userId: string, payload: Record<string, any>): Promise<{ updated: boolean; messageKey: string }> {
+    //     const busId = String(payload?.id ?? '');
         
-        await authHelper.validateUserById(userId, busId);
+    //     await authHelper.validateUserById(userId, busId);
 
-        return busService.updateBus(payload);
-    }
+    //     return busService.updateBus(payload);
+    // }
 
 
-    // =================================================================================================================================
-    //? start/ stop bus (by driver)
-    //===================================================================================================================    
+    // // =================================================================================================================================
+    // //? start/ stop bus (by driver)
+    // //===================================================================================================================    
 
-    async updateBusStatus(userId: string, payload: Record<string, any>): Promise<{ updated: boolean; messageKey: string }> {
-        const busId = String(payload?.id ?? '');
+    // async updateBusStatus(userId: string, payload: Record<string, any>): Promise<{ updated: boolean; messageKey: string }> {
+    //     const busId = String(payload?.id ?? '');
         
-        await authHelper.validateUserById(userId, busId);
+    //     await authHelper.validateUserById(userId, busId);
 
-        return busService.updateBus(payload);
-    }
+    //     return busService.updateBus(payload);
+    // }
 
 
 }
