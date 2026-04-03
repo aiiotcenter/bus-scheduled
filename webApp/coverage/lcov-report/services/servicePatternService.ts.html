@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for config/database.ts</title>
+    <title>Code coverage report for services/servicePatternService.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">config</a> database.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">services</a> servicePatternService.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>8/8</span>
-            </div>
-        
-            
-            <div class='fl pad1y space-right2'>
-                <span class="strong">92.85% </span>
-                <span class="quiet">Branches</span>
-                <span class='fraction'>13/14</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
-                <span class="quiet">Functions</span>
+                <span class="quiet">Branches</span>
                 <span class='fraction'>0/0</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
+                <span class="quiet">Functions</span>
+                <span class='fraction'>4/4</span>
+            </div>
+        
+            
+            <div class='fl pad1y space-right2'>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>8/8</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -108,23 +108,19 @@
 <a name='L43'></a><a href='#L43'>43</a>
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
-<a name='L46'></a><a href='#L46'>46</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<a name='L46'></a><a href='#L46'>46</a>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -133,14 +129,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -150,54 +142,98 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// ========================================================================
-// Unified Database Config and Sequelize Instance
-// ========================================================================
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">//======================================================================================================================
+//? Importing
+//======================================================================================================================
+import {
+    AddOrUpdateServicePatternPayload,
+    ServicePattern,
+    ServicePatternServiceResult,
+} from "./servicePatternService/types";
 &nbsp;
-import dotenv from 'dotenv';
-import path from 'path';
-import { Sequelize, Dialect } from 'sequelize';
+import { getServicePatterns } from "./servicePatternService/getServicePatterns";
+import { addServicePattern } from "./servicePatternService/addServicePattern";
+import { updateServicePattern } from "./servicePatternService/updateServicePattern";
+import { deleteServicePattern } from "./servicePatternService/deleteServicePattern";
 &nbsp;
-// Load .env
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+//======================================================================================================================
+//? Types
+//======================================================================================================================
 &nbsp;
-// Detect environment
-const isDocker = process.env.IS_DOCKER === 'true';
-const databaseHost = isDocker ? <span class="branch-0 cbranch-no" title="branch not covered" >'mysql' </span>: (process.env.DATABASE_HOST || 'localhost');
+//======================================================================================================================
+//? Service
+//======================================================================================================================
 &nbsp;
-// Configuration Object (Reusable by Sequelize CLI)
-export const databaseConfig = {
-  username: process.env.DATABASE_USER || 'root',
-  password: process.env.DATABASE_PASSWORD || 'bustracker123',
-  database: process.env.DATABASE_NAME || 'bus_tracker',
-  host: databaseHost,
-  port: Number(process.env.DATABASE_PORT) || 3306,
-  dialect: (process.env.DATABASE_DIALECT as Dialect) || 'mysql',
-  define: { timestamps: false },
-  logging: false, // Disable logging by default
-  retry: { max: 10 },
-};
+export class ServicePatternService {
 &nbsp;
-// ========================================================================
-// Sequelize Instance (for app use)
-// ========================================================================
+    //==================================================================================================================
+    //? Fetch all service patterns with their operating hours
+    //==================================================================================================================
+    async getServicePatterns(): Promise&lt;{ messageKey: string; data: ServicePattern[] }&gt; {
+        return getServicePatterns();
+    }
 &nbsp;
-export const sequelize = new Sequelize(
-  databaseConfig.database,
-  databaseConfig.username,
-  databaseConfig.password,
-  {
-    host: databaseConfig.host,
-    port: databaseConfig.port,
-    dialect: databaseConfig.dialect,
-    define: databaseConfig.define,
-    retry: databaseConfig.retry,
-    logging: databaseConfig.logging,
-  }
-);
+    //==================================================================================================================
+    //? Add service pattern with operating hours
+    //==================================================================================================================
+    async addServicePattern(payload: AddOrUpdateServicePatternPayload): Promise&lt;ServicePatternServiceResult&lt;ServicePattern&gt;&gt; {
+        return addServicePattern(payload);
+    }
+&nbsp;
+    //==================================================================================================================
+    //? Update service pattern (title + operating hours)
+    //==================================================================================================================
+    async updateServicePattern(payload: AddOrUpdateServicePatternPayload): Promise&lt;ServicePatternServiceResult&lt;ServicePattern&gt;&gt; {
+        return updateServicePattern(payload);
+    }
+&nbsp;
+    //==================================================================================================================
+    //? Delete service pattern with operating hours
+    //==================================================================================================================
+&nbsp;
+&nbsp;
+    async deleteServicePattern(servicePatternIdRaw: unknown): Promise&lt;{ messageKey: string }&gt; {
+        return deleteServicePattern(servicePatternIdRaw);
+    }
+    //============================================================================================================================
+    //============================================================================================================================
+}
+&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->

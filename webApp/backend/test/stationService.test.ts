@@ -11,7 +11,7 @@ import { ConflictError, InternalError, NotFoundError, ValidationError } from "@s
 import { defaultType, status } from "@src/enums/stationEnum";
 import { Op } from 'sequelize';
 
-// mock models/helpers ------------------------------------------------------------------------
+// mock models ------------------------------------------------------------------------
 jest.mock('@src/models/stationModel', () => ({
     __esModule: true,
     default: {
@@ -50,7 +50,7 @@ jest.mock('@src/config/database', () => ({
 }));
 
 
-// -------------------------------------------------------
+// import helpers -------------------------------------------------------
 
 jest.mock("@src/helpers/userHelper", () => {
     const mockUserHelperInstance = {

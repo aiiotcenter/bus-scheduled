@@ -16,8 +16,8 @@ import {
 
 import {
     AddOrUpdateServicePatternPayload,
-    OperatingHourDto,
-    ServicePatternDto,
+    OperatingHour,
+    ServicePattern,
     ServicePatternServiceResult,
 } from "./types";
 
@@ -25,7 +25,7 @@ import {
 
 export const updateServicePattern = async (
     payload: AddOrUpdateServicePatternPayload
-): Promise<ServicePatternServiceResult<ServicePatternDto>> => {
+): Promise<ServicePatternServiceResult<ServicePattern>> => {
     const servicePatternIdRaw = payload?.servicePatternId;
     const titleRaw = payload?.title;
     const selectedHoursRaw = payload?.hours;
@@ -77,7 +77,7 @@ export const updateServicePattern = async (
                 transaction: t,
             });
 
-            const createdOperatingHours: OperatingHourDto[] = [];
+            const createdOperatingHours: OperatingHour[] = [];
             for (const h of hours) {
                 let operatingHourId: string;
                 do {
@@ -100,7 +100,7 @@ export const updateServicePattern = async (
                 createdOperatingHours.push({ operatingHourId, hour });
             }
 
-            const out: ServicePatternDto = {
+            const out: ServicePattern = {
                 servicePatternId,
                 title,
                 operatingHours: createdOperatingHours,

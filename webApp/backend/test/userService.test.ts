@@ -3,7 +3,6 @@
 //==========================================================================================================
 
 
-import { language } from "@src/enums/userEnum";
 import { UserService } from "../src/services/userServices";
 
 
@@ -33,6 +32,23 @@ jest.mock("@src/helpers/userHelper", () => {
     };
 
 });
+
+
+// ============================================================================================================
+// ============================================================================================================
+// unit Test for user Service
+
+// - chageLanguage
+//   should change language successfully
+//   should throw error when language is empty
+//   should throw error when language is not string
+//   should return no changes when language is same as before
+
+// - chageApperance
+//   should change apperance successfully
+//   should throw error when apperance is empty
+//   should throw error when apperance is not string
+//   should return no changes when apperance is same as before
 
 
 // ============================================================================================================

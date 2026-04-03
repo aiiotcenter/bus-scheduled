@@ -16,6 +16,7 @@ import { addScheduledTrip, removeScheduledTrip, updateScheduledTrip } from "./sc
 
 export class ScheduleService {
 
+
     //===================================================================================================
     //? Fetch schedule (GET)
     // Fetch schedules with their operating hours timeline and scheduled trips
@@ -47,14 +48,10 @@ export class ScheduleService {
         return getUserSchedule(query);
     }
 
-    //===================================================================================================
-    //? Remove schedule (Delete)
-    //===================================================================================================
 
-    async removeScheduledTrip(detailedScheduleId: string) {
-        return removeScheduledTrip(detailedScheduleId);
-    }
 
+
+    
     //===================================================================================================
     //? add schedule (POST)
     // Create schedule row (date + servicePatternId). day is calculated from date.
@@ -63,32 +60,6 @@ export class ScheduleService {
     async addSchedule(input: { date: string; day: string; servicePatternId: string }) {
         const payload: AddScheduleInput = input;
         return addSchedule(payload);
-    }
-
-    //===================================================================================================
-    //? add scheduled trip (POST)
-    // Add a trip row to a specific schedule.
-    //===================================================================================================
-
-    async addScheduledTrip(input: {
-        scheduleId: string;
-        time: string;
-        routeId: string;
-        driverId: string;
-        busId: string;
-    }): Promise<AddScheduledTripResult> {
-        const payload: AddScheduledTripInput = input;
-        return addScheduledTrip(payload);
-    }
-
-    //===================================================================================================
-    //? update scheduled trip (PATCH)
-    // Update driver/bus for an existing scheduled trip (detailedScheduleId required).
-    //===================================================================================================
-
-    async updateScheduledTrip(input: UpdateScheduledTripInput): Promise<UpdateScheduledTripResult> {
-        const payload: UpdateScheduledTripInput = input;
-        return updateScheduledTrip(payload);
     }
 
     //===================================================================================================
@@ -109,4 +80,50 @@ export class ScheduleService {
     async removeSchedule(scheduleId: string) {
         return removeSchedule(scheduleId);
     }
+
+
+
+
+
+
+
+
+
+
+    //===================================================================================================
+    //? add scheduled trip (POST)
+    // Add a trip row to a specific schedule.
+    //===================================================================================================
+
+    async addScheduledTrip(input: {
+        scheduleId: string;
+        time: string;
+        routeId: string;
+        driverId: string;
+        busId: string;
+    }): Promise<AddScheduledTripResult> {
+        const payload: AddScheduledTripInput = input;
+        return addScheduledTrip(payload);
+    }
+
+    //===================================================================================================
+    //? Remove schedule (Delete)
+    //===================================================================================================
+
+    async removeScheduledTrip(detailedScheduleId: string) {
+        return removeScheduledTrip(detailedScheduleId);
+    }    
+
+    //===================================================================================================
+    //? update scheduled trip (PATCH)
+    // Update driver/bus for an existing scheduled trip (detailedScheduleId required).
+    //===================================================================================================
+
+    async updateScheduledTrip(input: UpdateScheduledTripInput): Promise<UpdateScheduledTripResult> {
+        const payload: UpdateScheduledTripInput = input;
+        return updateScheduledTrip(payload);
+    }
+
+
+
 }

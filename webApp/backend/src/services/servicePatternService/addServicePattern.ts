@@ -1,3 +1,4 @@
+
 //======================================================================================================================
 //? Importing
 //======================================================================================================================
@@ -7,7 +8,6 @@ import OperatingHoursModel from "../../models/operatingHoursModel";
 import { sequelize } from "../../config/database";
 
 import { ValidationError } from "../../errors";
-import { InternalError } from "../../errors/InternalError";
 
 import {
     endOperatingHour,
@@ -17,8 +17,8 @@ import {
 
 import {
     AddOrUpdateServicePatternPayload,
-    OperatingHourDto,
-    ServicePatternDto,
+    OperatingHour,
+    ServicePattern,
     ServicePatternServiceResult,
 } from "./types";
 
@@ -26,7 +26,7 @@ import {
 
 export const addServicePattern = async (
     payload: AddOrUpdateServicePatternPayload
-): Promise<ServicePatternServiceResult<ServicePatternDto>> => {
+): Promise<ServicePatternServiceResult<ServicePattern>> => {
     const titleRaw = payload?.title;
     const selectedHoursRaw = payload?.hours;
 
@@ -54,7 +54,8 @@ export const addServicePattern = async (
         throw new ValidationError("servicePatterns.validation.invalidHours");
     }
 
-        const created = await sequelize.transaction(async (t) => {
+    //     
+    const created = await sequelize.transaction(async (t) => {
             let servicePatternId: string;
             do {
                 const id = Math.floor(100 + Math.random() * 900);
@@ -70,7 +71,7 @@ export const addServicePattern = async (
             );
 
             // Create operating hours rows
-            const createdOperatingHours: OperatingHourDto[] = [];
+            const createdOperatingHours: OperatingHour[] = [];
 
             for (const h of hours) {
                 let operatingHourId: string;
@@ -95,7 +96,7 @@ export const addServicePattern = async (
                 createdOperatingHours.push({ operatingHourId, hour });
             }
 
-            const createdPattern: ServicePatternDto = {
+            const createdPattern: ServicePattern = {
                 servicePatternId,
                 title,
                 operatingHours: createdOperatingHours,
