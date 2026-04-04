@@ -1,14 +1,14 @@
 //===================================================================================================
 //? Importing
 //===================================================================================================
-import { ScheduleQueryParams, AddScheduleInput, UpdateScheduleInput, AddScheduledTripInput, AddScheduledTripResult, UpdateScheduledTripInput, UpdateScheduledTripResult } from "./scheduleService/types";
+import { ScheduleQueryParams, AddScheduleInput, UpdateScheduleInput, UpsertScheduledTripInput, UpsertScheduledTripResult } from "./scheduleService/types";
 
 import { getSchedule } from "./scheduleService/getSchedule";
 import { getUserSchedule } from "./scheduleService/getUserSchedule";
 
 import { addSchedule, updateSchedule, removeSchedule } from "./scheduleService/crud";
 
-import { addScheduledTrip, removeScheduledTrip, updateScheduledTrip } from "./scheduleService/scheduledTrips";
+import { upsertScheduledTrip, removeScheduledTrip } from "./scheduleService/scheduledTrips";
 
 //===================================================================================================
 //? schedule class
@@ -91,19 +91,12 @@ export class ScheduleService {
 
 
     //===================================================================================================
-    //? add scheduled trip (POST)
-    // Add a trip row to a specific schedule.
+    //? upsert scheduled trip (POST)
+    // Add or Update a trip row to a specific schedule.
     //===================================================================================================
 
-    async addScheduledTrip(input: {
-        scheduleId: string;
-        time: string;
-        routeId: string;
-        driverId: string;
-        busId: string;
-    }): Promise<AddScheduledTripResult> {
-        const payload: AddScheduledTripInput = input;
-        return addScheduledTrip(payload);
+    async upsertScheduledTrip(input: UpsertScheduledTripInput): Promise<{ messageKey: string, updated?: boolean}> {
+        return upsertScheduledTrip(input);
     }
 
     //===================================================================================================
@@ -114,15 +107,6 @@ export class ScheduleService {
         return removeScheduledTrip(detailedScheduleId);
     }    
 
-    //===================================================================================================
-    //? update scheduled trip (PATCH)
-    // Update driver/bus for an existing scheduled trip (detailedScheduleId required).
-    //===================================================================================================
-
-    async updateScheduledTrip(input: UpdateScheduledTripInput): Promise<UpdateScheduledTripResult> {
-        const payload: UpdateScheduledTripInput = input;
-        return updateScheduledTrip(payload);
-    }
 
 
 

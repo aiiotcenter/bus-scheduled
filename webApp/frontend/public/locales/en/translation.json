@@ -156,10 +156,11 @@
     "errors": {
       "driverNotAvailable": "Driver is not available at this time",
       "busNotAvailable": "Bus is not available at this time",
-      "driverOrBusNotAvailable": "Driver or bus is not available at this time",
+      "driverOrBusNotAvailable": "Driver or bus is not available at this time", 
       "notUpdated": "Trip was not updated",
       "notFound": "Trip not found",
-      "notRemoved": "Trip was not removed"
+      "notRemoved": "Trip was not removed",
+      "unexpectedConflictState": "Something went wrong, please try later"
     }
   },
 

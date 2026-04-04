@@ -160,8 +160,8 @@ class ScheduleController {
     //===================================================================================================
     //? Scheduled Trips
     //===================================================================================================
-    // Add Scheduled Trip --------------------------------------------------------------------------------------
-    async addScheduledTrip(req, res) {
+    // Upsert Scheduled Trip --------------------------------------------------------------------------------------
+    async upsertScheduledTrip(req, res) {
         try {
             const body = (req.body ?? {});
             const scheduleId = typeof body.scheduleId === 'string' ? body.scheduleId.trim() : '';
@@ -173,8 +173,8 @@ class ScheduleController {
                 (0, messageTemplate_1.sendResponse)(res, 500, 'common.errors.validation.fillAllFields');
                 return;
             }
-            const messageKey = await scheduleService.addScheduledTrip({ scheduleId, time, routeId, driverId, busId });
-            (0, messageTemplate_1.sendResponse)(res, 200, messageKey);
+            const messageKey = await scheduleService.upsertScheduledTrip({ scheduleId, time, routeId, driverId, busId });
+            (0, messageTemplate_1.sendResponse)(res, 200, messageKey.messageKey);
             return;
             // ---------------------------------------------------------
         }
@@ -195,26 +195,6 @@ class ScheduleController {
             (0, messageTemplate_1.sendResponse)(res, 200, 'tripForm.success.removed');
             return;
             // ---------------------------------------------------------
-        }
-        catch (error) {
-            (0, controllerErrorMapper_1.handleControllerError)(res, error);
-            return;
-        }
-    }
-    // Update Scheduled Trip --------------------------------------------------------------------------------------
-    async updateScheduledTrip(req, res) {
-        try {
-            const body = (req.body ?? {});
-            const detailedScheduleId = typeof body.detailedScheduleId === 'string' ? body.detailedScheduleId.trim() : '';
-            const driverId = typeof body.driverId === 'string' ? body.driverId.trim() : '';
-            const busId = typeof body.busId === 'string' ? body.busId.trim() : '';
-            if (!detailedScheduleId || !driverId || !busId) {
-                (0, messageTemplate_1.sendResponse)(res, 500, 'common.errors.validation.fillAllFields');
-                return;
-            }
-            const messageKey = await scheduleService.updateScheduledTrip({ detailedScheduleId, driverId, busId });
-            (0, messageTemplate_1.sendResponse)(res, 200, messageKey);
-            return;
         }
         catch (error) {
             (0, controllerErrorMapper_1.handleControllerError)(res, error);

@@ -1,4 +1,4 @@
-import { AddScheduledTripResult, UpdateScheduledTripInput, UpdateScheduledTripResult } from "./scheduleService/types";
+import { UpsertScheduledTripInput } from "./scheduleService/types";
 export declare class ScheduleService {
     getSchedule(params: {
         date?: string;
@@ -35,20 +35,11 @@ export declare class ScheduleService {
             }[];
         }[];
     }[]>;
-    removeScheduledTrip(detailedScheduleId: string): Promise<void>;
     addSchedule(input: {
         date: string;
         day: string;
         servicePatternId: string;
     }): Promise<void>;
-    addScheduledTrip(input: {
-        scheduleId: string;
-        time: string;
-        routeId: string;
-        driverId: string;
-        busId: string;
-    }): Promise<AddScheduledTripResult>;
-    updateScheduledTrip(input: UpdateScheduledTripInput): Promise<UpdateScheduledTripResult>;
     updateSchedule(updates: {
         scheduleId: string;
         date?: string;
@@ -56,5 +47,10 @@ export declare class ScheduleService {
         servicePatternId?: string;
     }): Promise<boolean>;
     removeSchedule(scheduleId: string): Promise<void>;
+    upsertScheduledTrip(input: UpsertScheduledTripInput): Promise<{
+        messageKey: string;
+        updated?: boolean;
+    }>;
+    removeScheduledTrip(detailedScheduleId: string): Promise<void>;
 }
 //# sourceMappingURL=scheduleService.d.ts.map

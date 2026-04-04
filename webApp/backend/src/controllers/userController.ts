@@ -65,49 +65,5 @@ export class UserController{
 
 
 
-    
-    // =================================================================================================================================
-    // change route (by driver)
-    //===================================================================================================================    
-
-    async changeRoute(req: Request, res: Response){
-        try {
-            const userId = req.user?.id;
-            if (userId == null) {
-                throw new UnauthorizedError('common.auth.sessionExpired');
-            }
-
-            const result = await userService.changeRoute(userId, req.body);
-            sendResponse(res, 200, result.messageKey);
-            return;
-            
-        // --------------------------------
-        } catch (error) {
-            handleControllerError(res, error);
-            return;
-        }
-    }
-
-    // =================================================================================================================================
-    // start/ stop bus (by driver)
-    //===================================================================================================================    
-    async changeBusStatus(req: Request, res: Response){
-        try {
-            const userId = req.user?.id;
-            if (userId == null) {
-                throw new UnauthorizedError('common.auth.sessionExpired');
-            }
-
-            const result = await userService.updateBusStatus(userId, req.body);
-            sendResponse(res, 200, result.messageKey);
-            return;
-
-        // --------------------------------
-        } catch (error) {
-            handleControllerError(res, error);
-            return;
-        }
-    }
-
 
 }

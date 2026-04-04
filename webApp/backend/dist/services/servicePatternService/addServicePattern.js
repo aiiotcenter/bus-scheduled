@@ -31,6 +31,7 @@ const addServicePattern = async (payload) => {
     if (hours.length === 0) {
         throw new errors_1.ValidationError("servicePatterns.validation.invalidHours");
     }
+    //     
     const created = await database_1.sequelize.transaction(async (t) => {
         let servicePatternId;
         do {

@@ -13,7 +13,7 @@ export type AddScheduleInput = { date: string; day: string; servicePatternId: st
 
 export type UpdateScheduleInput = { scheduleId: string; date?: string; day?: string; servicePatternId?: string };
 
-export type AddScheduledTripInput = {
+export type UpsertScheduledTripInput = {
     scheduleId: string;
     time: string;
     routeId: string;
@@ -21,14 +21,6 @@ export type AddScheduledTripInput = {
     busId: string;
 };
 
-export type AddScheduledTripResult = "tripForm.success.saved" | "tripForm.success.updated";
+export type UpsertScheduledTripResult = "tripForm.success.saved" | "tripForm.success.updated";
 
 
-// ===========================================================================
-export type UpdateScheduledTripInput = {
-    detailedScheduleId: string;
-    driverId: string;
-    busId: string;
-};
-
-export type UpdateScheduledTripResult = "tripForm.success.updated";

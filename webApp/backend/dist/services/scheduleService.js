@@ -27,34 +27,12 @@ class ScheduleService {
         return (0, getUserSchedule_1.getUserSchedule)(query);
     }
     //===================================================================================================
-    //? Remove schedule (Delete)
-    //===================================================================================================
-    async removeScheduledTrip(detailedScheduleId) {
-        return (0, scheduledTrips_1.removeScheduledTrip)(detailedScheduleId);
-    }
-    //===================================================================================================
     //? add schedule (POST)
     // Create schedule row (date + servicePatternId). day is calculated from date.
     //===================================================================================================
     async addSchedule(input) {
         const payload = input;
         return (0, crud_1.addSchedule)(payload);
-    }
-    //===================================================================================================
-    //? add scheduled trip (POST)
-    // Add a trip row to a specific schedule.
-    //===================================================================================================
-    async addScheduledTrip(input) {
-        const payload = input;
-        return (0, scheduledTrips_1.addScheduledTrip)(payload);
-    }
-    //===================================================================================================
-    //? update scheduled trip (PATCH)
-    // Update driver/bus for an existing scheduled trip (detailedScheduleId required).
-    //===================================================================================================
-    async updateScheduledTrip(input) {
-        const payload = input;
-        return (0, scheduledTrips_1.updateScheduledTrip)(payload);
     }
     //===================================================================================================
     //? update schedule (Patch)
@@ -70,6 +48,19 @@ class ScheduleService {
     //===================================================================================================
     async removeSchedule(scheduleId) {
         return (0, crud_1.removeSchedule)(scheduleId);
+    }
+    //===================================================================================================
+    //? upsert scheduled trip (POST)
+    // Add or Update a trip row to a specific schedule.
+    //===================================================================================================
+    async upsertScheduledTrip(input) {
+        return (0, scheduledTrips_1.upsertScheduledTrip)(input);
+    }
+    //===================================================================================================
+    //? Remove schedule (Delete)
+    //===================================================================================================
+    async removeScheduledTrip(detailedScheduleId) {
+        return (0, scheduledTrips_1.removeScheduledTrip)(detailedScheduleId);
     }
 }
 exports.ScheduleService = ScheduleService;

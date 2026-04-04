@@ -27,10 +27,6 @@ const authorizeRole_1 = require("../middlewares/authorizeRole"); // for authoriz
 //===========================================================================================================================
 router.get('/profile', (0, tokenRequired_1.accessRequireToken)(tokenNameEnum_1.loginToken), (0, authorizeRole_1.authorizeRole)(userEnum_1.role.driver), driverController.fetchDriverProfile);
 router.patch('/update', (0, tokenRequired_1.accessRequireToken)(tokenNameEnum_1.loginToken), (0, authorizeRole_1.authorizeRole)(userEnum_1.role.driver), driverController.updateDriverData);
-// change the route (by driver)
-router.patch('/change-route', (0, tokenRequired_1.accessRequireToken)(tokenNameEnum_1.loginToken), (0, authorizeRole_1.authorizeRole)(userEnum_1.role.driver), userController.changeRoute);
-// Start/Stop real-time tracking 
-router.patch('/tracking', (0, tokenRequired_1.accessRequireToken)(tokenNameEnum_1.loginToken), userController.changeBusStatus);
 // Fetch driver schedule 
 router.get('/schedule/fetch', (0, tokenRequired_1.accessRequireToken)(tokenNameEnum_1.loginToken), driverController.fetchDriverSchedule);
 //===========================================================================================================================

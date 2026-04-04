@@ -267,7 +267,7 @@ describe("DriverService", () => {
     describe("removeDriver", () => {
         test("should remove driver successfully", async () => {
             const UserHelperModule = require("@src/helpers/userHelper");
-            UserHelperModule.mockUserHelperInstance.remove.mockResolvedValueOnce(undefined);
+            UserHelperModule.mockUserHelperInstance.remove.mockResolvedValueOnce(1);
 
             const result = await driverService.removeDriver("D123");
 

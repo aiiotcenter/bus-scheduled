@@ -7,13 +7,5 @@ export declare class UserService {
         updated: boolean;
         messageKey: string;
     }>;
-    changeRoute(userId: string, payload: Record<string, any>): Promise<{
-        updated: boolean;
-        messageKey: string;
-    }>;
-    updateBusStatus(userId: string, payload: Record<string, any>): Promise<{
-        updated: boolean;
-        messageKey: string;
-    }>;
 }
 //# sourceMappingURL=userServices.d.ts.map

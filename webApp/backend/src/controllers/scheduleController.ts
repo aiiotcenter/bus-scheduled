@@ -180,8 +180,8 @@ export class ScheduleController {
 //? Scheduled Trips
 //===================================================================================================
 
-    // Add Scheduled Trip --------------------------------------------------------------------------------------
-    async addScheduledTrip(req: Request, res: Response) {
+    // Upsert Scheduled Trip --------------------------------------------------------------------------------------
+    async upsertScheduledTrip(req: Request, res: Response) {
         try {
             const body = (req.body ?? {}) as {
                 scheduleId?: unknown;
@@ -202,8 +202,8 @@ export class ScheduleController {
                 return;
             }
 
-            const messageKey = await scheduleService.addScheduledTrip({ scheduleId, time, routeId, driverId, busId });
-            sendResponse(res, 200, messageKey);
+            const messageKey = await scheduleService.upsertScheduledTrip({ scheduleId, time, routeId, driverId, busId });
+            sendResponse(res, 200, messageKey.messageKey);
             return;
 
         // ---------------------------------------------------------
@@ -233,31 +233,4 @@ export class ScheduleController {
         }
     }
 
-    // Update Scheduled Trip --------------------------------------------------------------------------------------
-    async updateScheduledTrip(req: Request, res: Response) {
-        try {
-            const body = (req.body ?? {}) as {
-                detailedScheduleId?: unknown;
-                driverId?: unknown;
-                busId?: unknown;
-            };
-
-            const detailedScheduleId = typeof body.detailedScheduleId === 'string' ? body.detailedScheduleId.trim() : '';
-            const driverId = typeof body.driverId === 'string' ? body.driverId.trim() : '';
-            const busId = typeof body.busId === 'string' ? body.busId.trim() : '';
-
-            if (!detailedScheduleId || !driverId || !busId) {
-                sendResponse(res, 500, 'common.errors.validation.fillAllFields');
-                return;
-            }
-
-            const messageKey = await scheduleService.updateScheduledTrip({ detailedScheduleId, driverId, busId });
-            sendResponse(res, 200, messageKey);
-            return;
-
-        } catch (error) {
-            handleControllerError(res, error);
-            return;
-        }
-    }
 }

@@ -1,1 +1,1 @@
-{"version":3,"file":"driverRoute.d.ts","sourceRoot":"","sources":["../../src/apiRoutes/driverRoute.ts"],"names":[],"mappings":"AAGA,OAAgB,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAE1C,QAAA,MAAM,MAAM,EAAE,MAAyB,CAAC;AA4CxC,eAAe,MAAM,CAAC"}
+{"version":3,"file":"driverRoute.d.ts","sourceRoot":"","sources":["../../src/apiRoutes/driverRoute.ts"],"names":[],"mappings":"AAGA,OAAgB,EAAE,MAAM,EAAE,MAAM,SAAS,CAAC;AAE1C,QAAA,MAAM,MAAM,EAAE,MAAyB,CAAC;AAsCxC,eAAe,MAAM,CAAC"}

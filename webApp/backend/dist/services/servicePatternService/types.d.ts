@@ -1,11 +1,11 @@
-export type OperatingHourDto = {
+export type OperatingHour = {
     operatingHourId: string;
     hour: string;
 };
-export type ServicePatternDto = {
+export type ServicePattern = {
     servicePatternId: string;
     title: string;
-    operatingHours: OperatingHourDto[];
+    operatingHours: OperatingHour[];
 };
 export type ServicePatternServiceResult<T> = {
     messageKey: string;

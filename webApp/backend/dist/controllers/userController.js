@@ -46,44 +46,6 @@ class UserController {
             return;
         }
     }
-    // =================================================================================================================================
-    // change route (by driver)
-    //===================================================================================================================    
-    async changeRoute(req, res) {
-        try {
-            const userId = req.user?.id;
-            if (userId == null) {
-                throw new errors_1.UnauthorizedError('common.auth.sessionExpired');
-            }
-            const result = await userService.changeRoute(userId, req.body);
-            (0, messageTemplate_1.sendResponse)(res, 200, result.messageKey);
-            return;
-            // --------------------------------
-        }
-        catch (error) {
-            (0, controllerErrorMapper_1.handleControllerError)(res, error);
-            return;
-        }
-    }
-    // =================================================================================================================================
-    // start/ stop bus (by driver)
-    //===================================================================================================================    
-    async changeBusStatus(req, res) {
-        try {
-            const userId = req.user?.id;
-            if (userId == null) {
-                throw new errors_1.UnauthorizedError('common.auth.sessionExpired');
-            }
-            const result = await userService.updateBusStatus(userId, req.body);
-            (0, messageTemplate_1.sendResponse)(res, 200, result.messageKey);
-            return;
-            // --------------------------------
-        }
-        catch (error) {
-            (0, controllerErrorMapper_1.handleControllerError)(res, error);
-            return;
-        }
-    }
 }
 exports.UserController = UserController;
 //# sourceMappingURL=userController.js.map

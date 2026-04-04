@@ -37,12 +37,6 @@ router.get('/profile', accessRequireToken(loginToken), authorizeRole(role.driver
 
 router.patch('/update',  accessRequireToken(loginToken), authorizeRole(role.driver), driverController.updateDriverData);
 
-// change the route (by driver)
-router.patch('/change-route', accessRequireToken(loginToken), authorizeRole(role.driver),  userController.changeRoute);
-
-// Start/Stop real-time tracking 
-router.patch('/tracking', accessRequireToken(loginToken), userController.changeBusStatus);
-
 // Fetch driver schedule 
 router.get('/schedule/fetch', accessRequireToken(loginToken), driverController.fetchDriverSchedule);
 

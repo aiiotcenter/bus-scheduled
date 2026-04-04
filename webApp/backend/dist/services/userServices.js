@@ -23,8 +23,11 @@ class UserService {
     //? function to change app language
     //===================================================================================================
     async changeLanguage(userId, language) {
-        if (typeof language !== 'string' || language.trim() === '') {
+        if (typeof language !== 'string') {
             throw new errors_1.ValidationError('common.errors.validation.invalidField');
+        }
+        else if (language.trim() === '') {
+            throw new errors_1.ValidationError('common.errors.validation.fillAllFields');
         }
         const result = await userhelper.update(userModel_1.default, { id: userId, language: language.trim() });
         return {
@@ -36,30 +39,17 @@ class UserService {
     //? function to change app apperacne 
     //===================================================================================================
     async changeAppearance(userId, appearance) {
-        if (typeof appearance !== 'string' || appearance.trim() === '') {
+        if (typeof appearance !== 'string') {
             throw new errors_1.ValidationError('common.errors.validation.invalidField');
+        }
+        else if (appearance.trim() === '') {
+            throw new errors_1.ValidationError('common.errors.validation.fillAllFields');
         }
         const result = await userhelper.update(userModel_1.default, { id: userId, appearance: appearance.trim() });
         return {
             updated: result.updated,
             messageKey: result.updated ? 'common.crud.updated' : 'common.crud.noChanges'
         };
-    }
-    // =================================================================================================================================
-    //? change route (by driver)
-    //===================================================================================================================    
-    async changeRoute(userId, payload) {
-        const busId = String(payload?.id ?? '');
-        await authHelper.validateUserById(userId, busId);
-        return busService.updateBus(payload);
-    }
-    // =================================================================================================================================
-    //? start/ stop bus (by driver)
-    //===================================================================================================================    
-    async updateBusStatus(userId, payload) {
-        const busId = String(payload?.id ?? '');
-        await authHelper.validateUserById(userId, busId);
-        return busService.updateBus(payload);
     }
 }
 exports.UserService = UserService;

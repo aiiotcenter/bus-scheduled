@@ -136,24 +136,18 @@ const AddScheduledTrip: React.FC<AddScheduledTripProps> = ({
     setError('');
 
     try {
-      // if we have detailedScheduleId, we update the trip, else we add a new trip
-      const res = detailedScheduleId
-        ? await apiClient.patch(
-            `/api/admin/schedule/trip/update`,
-            { detailedScheduleId, driverId, busId },
-            { headers: { 'Content-Type': 'application/json' } }
-          )
-        : await apiClient.post(
-            `/api/admin/schedule/trip/add`,
-            {
-              scheduleId: tripInfo.scheduleId,
-              time: tripInfo.time,
-              routeId: tripInfo.routeId,
-              driverId,
-              busId,
-            },
-            { headers: { 'Content-Type': 'application/json' } }
-          );
+      // usage of the new upsert endpoint (always POST to /upsert)
+      const res = await apiClient.post(
+        `/api/admin/schedule/trip/upsert`,
+        {
+          scheduleId: tripInfo.scheduleId,
+          time: tripInfo.time,
+          routeId: tripInfo.routeId,
+          driverId,
+          busId,
+        },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
 
       const serverMessageKey = String(res?.data?.message || '').trim();
       onSuccess(serverMessageKey ? tCommon(serverMessageKey, { defaultValue: serverMessageKey }) : tCommon('tripForm.success.saved'));
