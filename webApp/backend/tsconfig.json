@@ -15,9 +15,9 @@
 
 
     //  path alis for import 
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@src/*": ["src/*"]
+      "@/*": ["*"]
     },
 
 

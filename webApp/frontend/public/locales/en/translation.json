@@ -130,6 +130,11 @@
 
 
   "schedule": {
+    "success":{
+      "added": "Schedule added successfully",
+      "updated": "Schedule updated successfully", 
+      "removed": "schedule removed successfully"
+    },
     "errors": {
       "invalidDate": "Invalid date",
       "notFound": "Schedule not found"

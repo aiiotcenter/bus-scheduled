@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "_moduleAliases": {
+    "@src": "backend/dist"
+  },
   "scripts": {
-    "seed": "cd backend && npx ts-node src/database/constructDatabase.ts",
+    "seed": "cd backend && npx ts-node -r tsconfig-paths/register src/database/constructDatabase.ts",
     "test": "jest --coverage",
-    "dev": "concurrently \"tsc -w -p backend/tsconfig.json\" \"tsc -w -p frontend/tsconfig.json\" \"nodemon backend/dist/server.js\"",
-    "build:backend": "tsc -p backend/tsconfig.json",
+    "dev": "npm run build:backend && concurrently \"tsc -w -p backend/tsconfig.json\" \"npx tsc-alias -p backend/tsconfig.json -w\" \"tsc -w -p frontend/tsconfig.json\" \"nodemon backend/dist/server.js\"",
+    "build:backend": "tsc -p backend/tsconfig.json && npx tsc-alias -p backend/tsconfig.json",
     "build:frontend": "tsc -p frontend/tsconfig.json",
     "build": "npm run build:backend && npm run build:frontend",
     "start": "npm run build && concurrently \"nodemon backend/dist/server.js\" \"cd frontend && npm run dev\"",
@@ -42,6 +45,7 @@
     "@types/express": "^5.0.5",
     "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/module-alias": "^2.0.4",
     "@types/node": "^24.9.1",
     "@types/nodemailer": "^7.0.3",
     "@types/socket.io-client": "^1.4.36",
@@ -50,6 +54,9 @@
     "jest-html-reporters": "^3.1.7",
     "jest-junit": "^16.0.0",
     "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.0.0"
   },
   "repository": {

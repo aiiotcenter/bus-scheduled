@@ -9,7 +9,6 @@ import http from 'http';
 import { Server as SocketIOServer } from 'socket.io';
 import app from './app';
 
-// import displayMessage from '../frontend/src/script'; // Removed: backend shouldn't import frontend code directly
 
 const port: number = Number(process.env.BACKEND_SERVER_PORT)|| 3001;
 

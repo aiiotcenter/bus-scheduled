@@ -1,1 +1,0 @@
-{"version":3,"file":"busStationInterface.d.ts","sourceRoot":"","sources":["../../src/interfaces/busStationInterface.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,MAAM,EAAE,MAAM,yBAAyB,CAAC;AAGjD,MAAM,WAAW,oBAAoB;IACjC,EAAE,EAAC,MAAM,CAAC;IACV,WAAW,EAAE,MAAM,CAAC;IACpB,QAAQ,EAAE,MAAM,CAAC;IACjB,SAAS,EAAE,MAAM,CAAC;IAClB,MAAM,EAAE,MAAM,OAAO,MAAM,CAAC;CAE/B"}

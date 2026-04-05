@@ -19,13 +19,11 @@ const errors_1 = require("../../errors");
 //? function to remove data
 // ===========================================================================
 const removeScheduledTrip = async (detailedScheduleId) => {
-    // const deletedCount = await ScheduledTripsModel.destroy({ 
-    //     where: { detailedScheduleId } 
-    // });
-    const deletedCount = await userHelper.remove(scheduledTripsModel_1.default, 'detailedScheduleId', String(detailedScheduleId));
-    if (deletedCount === 0) {
-        throw new errors_1.NotFoundError("tripForm.errors.notFound");
+    if (!detailedScheduleId) {
+        throw new errors_1.ValidationError("common.errors.validation.fillAllFields");
     }
+    await userHelper.remove(scheduledTripsModel_1.default, 'detailedScheduleId', String(detailedScheduleId));
+    return { messageKey: 'tripForm.success.removed' };
 };
 exports.removeScheduledTrip = removeScheduledTrip;
 // ===========================================================================

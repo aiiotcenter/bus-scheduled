@@ -14,7 +14,7 @@ const userHelper = new UserHelper();
 import { ConflictError, NotFoundError, ValidationError } from "../../errors";
 
 import { UpsertScheduledTripInput, UpsertScheduledTripResult } from "./types";
-import scheduledTrips from "@src/seeders/sampleScheduledTrips";
+import scheduledTrips from "@/seeders/sampleScheduledTrips";
 
 //===================================================================================================
 

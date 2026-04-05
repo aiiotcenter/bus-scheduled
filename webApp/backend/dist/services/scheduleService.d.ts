@@ -39,7 +39,9 @@ export declare class ScheduleService {
         date: string;
         day: string;
         servicePatternId: string;
-    }): Promise<void>;
+    }): Promise<{
+        messageKey: string;
+    }>;
     updateSchedule(updates: {
         scheduleId: string;
         date?: string;
@@ -51,6 +53,8 @@ export declare class ScheduleService {
         messageKey: string;
         updated?: boolean;
     }>;
-    removeScheduledTrip(detailedScheduleId: string): Promise<void>;
+    removeScheduledTrip(detailedScheduleId: string): Promise<{
+        messageKey: string;
+    }>;
 }
 //# sourceMappingURL=scheduleService.d.ts.map

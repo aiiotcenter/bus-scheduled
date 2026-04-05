@@ -14,6 +14,7 @@ const userHelper = new userHelper_1.UserHelper();
 //===================================================================================================
 const addSchedule = async (input) => {
     await userHelper.add(scheduleModel_1.default, { date: input.date, day: input.day, servicePatternId: input.servicePatternId });
+    return { messageKey: "schedule.success.added" };
 };
 exports.addSchedule = addSchedule;
 const updateSchedule = async (updates) => {
